@@ -1,0 +1,15 @@
+body {
+    display: flex;
+}
+
+#search-result-list > div{
+    display: block;
+}
+
+#search-result-list > div > div{
+    display: inline;
+}
+
+#search-result-hit-num {
+    font-weight: bold;
+}
