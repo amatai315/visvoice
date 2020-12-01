@@ -23,7 +23,7 @@ for urlName in url_names:
     url = requests.get(urlName)
     soup = BeautifulSoup(url.content, "html.parser")
     
-    all_man = soup.find_all(attrs = {"class":["man","female"]})
+    all_man = soup.find_all(attrs = {"class":["man","female","no_sex"]})
     for actor in all_man:
         tag = actor.parent['href']
         name = actor.contents[0]

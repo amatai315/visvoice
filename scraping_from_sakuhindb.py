@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 import time
 
-actor_number_starting_scraping = 4589
+actor_number_starting_scraping = 0
 
 top_char_b =["a","i","u","e","o"]
 top_char_s =["", "k","s","t","n","h","m","y","r","w"]
@@ -27,7 +27,7 @@ for urlName in url_names:
     url = requests.get(urlName)
     soup = BeautifulSoup(url.content, "html.parser")
     
-    all_man = soup.find_all(attrs = {"class":["man","female"]})
+    all_man = soup.find_all(attrs = {"class":["man","female","no_sex"]})
     for actor in all_man:
         tag = actor.parent['href']
         name = actor.contents[0]
@@ -90,3 +90,5 @@ for actor_url in actor_urls:
             # fw = codecs.open('data/voice_actors.json', 'a', 'utf-8')
             # json.dump(data_json, fw, indent=3, ensure_ascii=False)
             break
+
+print("all process done")
