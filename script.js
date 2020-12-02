@@ -26,14 +26,13 @@ d3.csv("./data/voice_actors.csv").then((data) => {
 
     console.log(worksList);
 
-
 });
 
 menu.append("input")
     .attr("id", "search-text")
     .attr("type", "text")
     .attr("placeholder", "検索ワードを入力")
-    .on("input", searchWord);
+    .on("input", searchWorks);
 
 menu.append("div")
     .attr("id", "search-result-hit-num");
@@ -41,7 +40,7 @@ menu.append("div")
 menu.append("div")
     .attr("id", "search-result-list");
 
-function searchWord() {
+function searchWorks() {
     const searchText = d3.select("#search-text").node().value;
 
     d3.selectAll("#search-result-list > div").remove();
@@ -69,16 +68,14 @@ function searchWord() {
     }
 }
 
-var center_x = (width-width_menu)/2;
-var center_y = height/2;
+var center_x = (width - width_menu) / 2;
+var center_y = height / 2;
 
 function updateGraph() {
     var simulation = d3.forceSimulation()
         .force("link", d3.forceLink().id((d) => d.id))
         .force("charge", d3.forceManyBody())
         .force("center", d3.forceCenter(center_x, center_y));
-        
-    
 
     const validDataList = [];
     worksList.filter((w) => w.selected)
@@ -144,16 +141,20 @@ function updateGraph() {
     const nodes = svg.selectAll("circle")
         .data(actorsAndChars).enter()
         .append("g")
-        .attr("class", "node_group");
+        .attr("class", "node_group")
+        .call(
+            d3.drag()
+                .on("start", dragstarted_node)
+                .on("drag", dragged_node)
+                .on("end", dragended_node)
+        );
 
-    svg.selectAll(".node_group")
-        .append("circle")
+    nodes.append("circle")
         .attr("stroke", "black")
         .attr("fill", "white")
         .attr("r", 15);
 
-    svg.selectAll(".node_group")
-        .append("text")
+    nodes.append("text")
         .attr("font-size", 12)
         .attr("stroke", "black")
         .text((d) => d.name);
@@ -183,55 +184,42 @@ function updateGraph() {
             .attr("y", (d) => d.y + 10);
     }
 
-    nodes.call(
-        d3.drag()
-          .on("start",dragstarted_node)
-          .on("drag",dragged_node)
-          .on("end",dragended_node)
-          
-    );
-
-    
-    function dragstarted_node(d) {
-
-    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    function dragstarted_node(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
     }
 
-    function dragged_node(d) {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
-        
+    function dragged_node(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
     }
 
-
-    function dragended_node(d) {
-    if (!d3.event.active) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
+    function dragended_node(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
     }
 
     svg.call(
         d3.drag()
-          .on("start",dragstarted_all)
-          .on("drag",dragged_all)
-          .on("end",dragended_all)
-          
+            .on("start", dragstarted_all)
+            .on("drag", dragged_all)
+            .on("end", dragended_all)
     );
 
-    function dragstarted_all(d){
+    function dragstarted_all(d) {
 
     }
 
-    function dragged_all(d){
-        center_x += d3.event.dx;
-        center_y += d3.event.dy;
+    function dragged_all(event, d) {
+        center_x += event.dx;
+        center_y += event.dy;
         simulation
-            .force("center",d3.forceCenter(center_x,center_y));
-    }   
+            .force("center", d3.forceCenter(center_x, center_y));
+    }
 
-    function dragended_all(d){
+    function dragended_all(d) {
 
     }
 }
