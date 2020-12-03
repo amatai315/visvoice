@@ -56,7 +56,7 @@ menu
   .append("input")
   .attr("id", "search-text")
   .attr("type", "text")
-  .attr("placeholder", "検索ワードを入力")
+  .attr("placeholder", "作品名を入力")
   .on("input", searchWorks);
 
 menu.append("div").attr("id", "search-result-hit-num");
@@ -83,7 +83,7 @@ function searchWorks() {
           .attr("value", d.title)
           .on("change", () => {
             d.selected = !d.selected;
-            updateGraph();
+            updateBubble();
           });
         if (d.selected) checkbox.attr("checked", "checked");
         checkboxWrapper.append("div").text(`${d.title}`);
@@ -93,18 +93,12 @@ function searchWorks() {
   }
 }
 
-var center_x = (width - width_menu) / 2;
-var center_y = height / 2;
-
-function updateGraph() {
-  var simulation = d3
-    .forceSimulation()
-    .force(
-      "link",
-      d3.forceLink().id((d) => d.id)
-    )
-    .force("charge", d3.forceManyBody())
-    .force("center", d3.forceCenter(center_x, center_y));
+function updateBubble() {
+  var simulation = d3.forceSimulation()
+    .force("x", d3.forceX(width / 2).strength(0.2))
+    .force("y", d3.forceY(height / 2).strength(0.2))
+    .force("collision", d3.forceCollide().radius(d => d.radius + 2))
+    .force("center", d3.forceCenter(width / 2, height / 2));
 
   const validDataList = [];
   worksList
@@ -115,68 +109,14 @@ function updateGraph() {
       });
     });
 
-  //validDataListに一つしか含まれない声優を弾く処理で、少し複雑です。
-  validDataList.sort(sortData);
-  while (true) {
-    if (validDataList.length == 1) {
-      validDataList.splice(0, 1);
-      break;
-    }
-    if (validDataList.length == 0) {
-      break;
-    }
-    if (validDataList[0].name == validDataList[1].name) break;
-    validDataList.splice(0, 1);
-  }
-  for (var i = 2; i < validDataList.length; i++) {
-    if (
-      validDataList[i - 2].name != validDataList[i - 1].name &&
-      validDataList[i - 1].name != validDataList[i].name
-    ) {
-      validDataList.splice(i - 1, 1);
-      i--;
-    }
-  }
-  const tmpListLength = validDataList.length;
-  if (tmpListLength > 1) {
-    if (
-      validDataList[tmpListLength - 2].name !=
-      validDataList[tmpListLength - 1].name
-    ) {
-      validDataList.pop();
-    }
-  }
-
   const actorsAndChars = [];
 
   validDataList.forEach((d) => {
-    if (actorsAndChars.filter((a) => a.name == d.name).length == 0) {
-      actorsAndChars.push({ name: d.name, type: "actor", id: d.name });
-    }
-    actorsAndChars.push({
-      name: d.character,
-      type: "character",
-      id: d.name + d.jenre + d.title + d.character,
-    });
-  });
-
-  const connections = validDataList.map((d) => {
-    return {
-      source: d.name,
-      target: d.name + d.jenre + d.title + d.character,
-    };
+    actorsAndChars.push({ name: d.name, type: "actor", char: d.character, radius: node_radius() });
   });
 
   svg.selectAll("line").remove();
   svg.selectAll("g").remove();
-
-  const links = svg
-    .selectAll("line")
-    .data(connections)
-    .enter()
-    .append("line")
-    .attr("stroke", "lightgrey")
-    .attr("stroke-width", 1);
 
   const nodes = svg
     .selectAll("circle")
@@ -190,39 +130,47 @@ function updateGraph() {
         .on("start", dragstarted_node)
         .on("drag", dragged_node)
         .on("end", dragended_node)
-    );
+    )
+    .on("click", clicked_actor_node);
 
   nodes
     .append("circle")
     .attr("stroke", "black")
     .attr("fill", "white")
-    .attr("r", 15);
+    .attr("r", d => d.radius);
 
   nodes
     .append("text")
+    .attr("class", "char-name")
     .attr("font-size", 12)
+    .attr("text-anchor", "middle")
+    .attr("stroke", "black")
+    .text((d) => d.char);
+
+  nodes
+    .append("text")
+    .attr("class", "actor-name")
+    .attr("font-size", 12)
+    .attr("text-anchor", "middle")
     .attr("stroke", "black")
     .text((d) => d.name);
 
   simulation.nodes(actorsAndChars).on("tick", ticked);
 
-  simulation.force("link").links(connections).distance(50);
-
   function ticked() {
-    links
-      .attr("x1", (d) => d.source.x)
-      .attr("y1", (d) => d.source.y)
-      .attr("x2", (d) => d.target.x)
-      .attr("y2", (d) => d.target.y);
-
     nodes
       .selectAll("circle")
       .attr("cx", (d) => d.x)
       .attr("cy", (d) => d.y);
 
     nodes
-      .selectAll("text")
-      .attr("x", (d) => d.x + 10)
+      .selectAll(".char-name")
+      .attr("x", (d) => d.x)
+      .attr("y", (d) => d.y - 10);
+
+    nodes
+      .selectAll(".actor-name")
+      .attr("x", (d) => d.x)
       .attr("y", (d) => d.y + 10);
   }
 
@@ -242,31 +190,13 @@ function updateGraph() {
     d.fx = null;
     d.fy = null;
   }
+
+  function node_radius() {
+    return 60;
+  }
 }
 
-//     svg.call(
-//         d3.drag()
-//             .on("start", dragstarted_all)
-//             .on("drag", dragged_all)
-//             .on("end", dragended_all)
-//     );
-
-//     function dragstarted_all(d) {
-
-//     }
-
-//     function dragged_all(event, d) {
-//         center_x += event.dx;
-//         center_y += event.dy;
-//         simulation
-//             .force("center", d3.forceCenter(center_x, center_y));
-//     }
-
-//     function dragended_all(d) {
-
-//     }
-// }
-
-function sortData(a, b) {
-  return b.name > a.name;
+function clicked_actor_node(event, d) {
+  //ここに、声優のノードがノードがクリックされたときの挙動を書く感じです。
+  console.log(d);
 }
