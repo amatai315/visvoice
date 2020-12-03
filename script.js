@@ -1,6 +1,7 @@
 const height = 1000;
 const width = 2000;
 const width_menu = 500;
+var currentTransform = { k: 1, x: 0, y: 0 };
 const canvas = d3
   .select("body")
   .append("svg")
@@ -15,7 +16,10 @@ canvas
 var svg = canvas.append("g");
 function zoom(event) {
   svg.attr("transform", event.transform);
+  currentTransform = event.transform;
 }
+
+
 
 function transform(t) {
   return function (d) {
@@ -155,6 +159,8 @@ function updateBubble() {
     .attr("stroke", "black")
     .text((d) => d.name);
 
+  console.log(nodes);
+
   simulation.nodes(actorsAndChars).on("tick", ticked);
 
   function ticked() {
@@ -198,5 +204,13 @@ function updateBubble() {
 
 function clicked_actor_node(event, d) {
   //ここに、声優のノードがノードがクリックされたときの挙動を書く感じです。
-  console.log(d);
+  const selectedActorNode = d3.select(event.currentTarget);
+  console.log(event);
+  const currentK = currentTransform.k;
+  const k = 3;
+  svg.transition()
+    .duration(750)
+    .attr("transform", `translate(${width / 2},${height / 2})scale(${k})translate(${-event.layerX},${-event.layerY})translate(${currentTransform.x},${currentTransform.y})`);//
 }
+
+
