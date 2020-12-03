@@ -156,14 +156,14 @@ function updateGraph() {
     actorsAndChars.push({
       name: d.character,
       type: "character",
-      id: d.jenre + d.title + d.character,
+      id: d.name + d.jenre + d.title + d.character,
     });
   });
 
   const connections = validDataList.map((d) => {
     return {
       source: d.name,
-      target: d.jenre + d.title + d.character,
+      target: d.name + d.jenre + d.title + d.character,
     };
   });
 
