@@ -2,6 +2,7 @@ const height = 1000;
 const width = 2000;
 const width_menu = 500;
 var currentTransform = { k: 1, x: 0, y: 0 };
+var actor_selected = false;
 const canvas = d3
   .select("body")
   .append("svg")
@@ -56,11 +57,14 @@ d3.csv("./data/voice_actors.csv").then((data) => {
   console.log(worksList);
 });
 
+menu.append("div")
+  .text("作品名で検索");
+
 menu
   .append("input")
   .attr("id", "search-text")
   .attr("type", "text")
-  .attr("placeholder", "作品名を入力")
+  .attr("placeholder", "作品名で検索")
   .on("input", searchWorks);
 
 menu.append("div").attr("id", "search-result-hit-num");
@@ -159,8 +163,6 @@ function updateBubble() {
     .attr("stroke", "black")
     .text((d) => d.name);
 
-  console.log(nodes);
-
   simulation.nodes(actorsAndChars).on("tick", ticked);
 
   function ticked() {
@@ -205,12 +207,21 @@ function updateBubble() {
 function clicked_actor_node(event, d) {
   //ここに、声優のノードがノードがクリックされたときの挙動を書く感じです。
   const selectedActorNode = d3.select(event.currentTarget);
-  console.log(event);
-  const currentK = currentTransform.k;
-  const k = 3;
-  svg.transition()
-    .duration(750)
-    .attr("transform", `translate(${width / 2},${height / 2})scale(${k})translate(${-event.layerX},${-event.layerY})translate(${currentTransform.x},${currentTransform.y})`);//
+
+  if (!actor_selected) {
+    const node = selectedActorNode.select("circle");
+    const k = 30;
+    svg.transition()
+      .duration(750)
+      .attr("transform", `translate(${width / 2},${height / 2})scale(${k})
+    translate(${-node.attr("cx")},${-node.attr("cy")})
+    translate(${currentTransform.x},${currentTransform.y})`);
+  } else {
+    svg.transition()
+      .duration(750)
+      .attr("transform", `translate(0,0)scale(1)`);
+  }
+  actor_selected = !actor_selected;
 }
 
 
