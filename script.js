@@ -16,8 +16,10 @@ canvas
   .attr("fill", "floralwhite");
 var svg = canvas.append("g");
 function zoom(event) {
-  svg.attr("transform", event.transform);
-  currentTransform = event.transform;
+  if (!actor_selected) {
+    svg.attr("transform", event.transform);
+    currentTransform = event.transform;
+  }
 }
 
 
@@ -103,8 +105,6 @@ function searchWorks() {
 
 function updateBubble() {
   var simulation = d3.forceSimulation()
-    .force("x", d3.forceX(width / 2).strength(0.2))
-    .force("y", d3.forceY(height / 2).strength(0.2))
     .force("collision", d3.forceCollide().radius(d => d.radius + 2))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
@@ -132,13 +132,6 @@ function updateBubble() {
     .enter()
     .append("g")
     .attr("class", "node_group")
-    .call(
-      d3
-        .drag()
-        .on("start", dragstarted_node)
-        .on("drag", dragged_node)
-        .on("end", dragended_node)
-    )
     .on("click", clicked_actor_node);
 
   nodes
@@ -182,23 +175,6 @@ function updateBubble() {
       .attr("y", (d) => d.y + 10);
   }
 
-  function dragstarted_node(event, d) {
-    if (!event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-  }
-
-  function dragged_node(event, d) {
-    d.fx = event.x;
-    d.fy = event.y;
-  }
-
-  function dragended_node(event, d) {
-    if (!event.active) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-  }
-
   function node_radius() {
     return 60;
   }
@@ -214,12 +190,11 @@ function clicked_actor_node(event, d) {
     svg.transition()
       .duration(750)
       .attr("transform", `translate(${width / 2},${height / 2})scale(${k})
-    translate(${-node.attr("cx")},${-node.attr("cy")})
-    translate(${currentTransform.x},${currentTransform.y})`);
+             translate(${-node.attr("cx")},${-node.attr("cy")})`);
   } else {
     svg.transition()
       .duration(750)
-      .attr("transform", `translate(0,0)scale(1)`);
+      .attr("transform", `translate(${currentTransform.x},${currentTransform.y})scale(${currentTransform.k})`);
   }
   actor_selected = !actor_selected;
 }
