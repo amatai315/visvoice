@@ -120,7 +120,7 @@ function updateBubble() {
   const actorsAndChars = [];
 
   validDataList.forEach((d) => {
-    actorsAndChars.push({ name: d.name, type: "actor", char: d.character, radius: node_radius() });
+    actorsAndChars.push({ name: d.name, type: "actor", char: d.character, radius: nodeRadius() });
   });
 
   svg.selectAll("line").remove();
@@ -132,7 +132,7 @@ function updateBubble() {
     .enter()
     .append("g")
     .attr("class", "node_group")
-    .on("click", clicked_actor_node);
+    .on("click", clickedActorNode);
 
   nodes
     .append("circle")
@@ -175,12 +175,12 @@ function updateBubble() {
       .attr("y", (d) => d.y + 10);
   }
 
-  function node_radius() {
+  function nodeRadius() {
     return 60;
   }
 }
 
-function clicked_actor_node(event, d) {
+function clickedActorNode(event, d) {
   //ここに、声優のノードがノードがクリックされたときの挙動を書く感じです。
   const selectedActorNode = d3.select(event.currentTarget);
 
