@@ -18,6 +18,7 @@ var svg_character = d3.select("body")
 var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
 var month_day_sum =[0,31,59,90,120,151,181,212,243,273,304,334,365];
+//const person = "子安武人"; 
 const person = "麻倉もも";  //全体の実装では、声優のノードをタッチした時に、ここに声優の名前を取得できるようにする
 
 var personal_data =[];
@@ -29,7 +30,10 @@ var keys = [];
 const fixed_r = 30;
 const img_width = 60;
 const img_height = 60;
-const select_year_range = 3; //年を選んだ時、その前後1年のデータのみを取ってくる
+const select_year_range = 3; //年を選んだ時、その前後3年のデータのみを取ってくる
+const select_node_num = 20; //画面に表示する最大のノード数
+//上の二つは、そのうちボタンとかつけてユーザーが選べるようにする
+
 d3.json("./voice_actors_with_img_url.json").then(function(data){
   personal_data = data[person];
   
@@ -140,6 +144,7 @@ function show_bubble_chart(){
     .force("charge",d3.forceManyBody().strength(5));
     //.force("center", d3.forceCenter(width/2, height/2)); //反発力の設定
     
+  /*data_selected: 半径が大きい上位20個を取ってくる配列*/
   data_selected = []
   data_selected = personal_data
       .filter(function(d){
@@ -147,6 +152,15 @@ function show_bubble_chart(){
           return true;
         }
       });
+    
+  data_selected.sort(function(a,b){
+    if(a.radius > b.radius) return -1;
+    if(a.radius < b.radius) return 1;
+    return 0;
+  })
+
+  data_selected = data_selected.slice(0,select_node_num);
+
   
   console.log(input);
   console.log(data_selected);
@@ -154,6 +168,8 @@ function show_bubble_chart(){
   var tooltip = d3.select("body")
           .append("div")
           .attr("class", "tooltip");
+
+    tooltip.style("opacity",0);
 
   var nodes = svg_character
     .selectAll("circle")
@@ -163,23 +179,7 @@ function show_bubble_chart(){
     .call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
-        .on("end", dragended))
-    .on("mouseover", function(event,d){
-      //console.log(d);
-      console.log(d.character);
-      tooltip
-        .style("opacity", 1.0)
-        .html("anime:" + d.title + "<br/>character:" + d.character);
-    })
-    .on("mousemove", function(event,d){
-      tooltip
-      .style("left", (event.pageX) + "px")
-      .style("top", (event.pageY) + "px");
-    })
-    .on("mouseout",function(d){
-      //console.log("boo");
-      tooltip.style("opacity",0.0);
-    });
+        .on("end", dragended));
   
   //console.log(nodes);
     
@@ -189,7 +189,21 @@ function show_bubble_chart(){
       .attr("stroke", "black")
       .attr("fill", function(d){return colorScale(d.jenre);})
       .attr("class", function(d){return "node_" + d.character;})
-      .attr("r", (d)=>d.radius);
+      .attr("r", (d)=>d.radius)
+      .on("mouseover", function(event,d){
+        //console.log(d.title);
+        //console.log(d.character);
+        tooltip
+          .style("opacity", 1.0);
+        tooltip.html("anime:" + d.title + + "<br/>character:" + d.character)
+          .style("left", (event.pageX) + "px")
+          .style("top", (event.pageY) + "px");
+      })
+      .on("mouseout",function(){
+        //console.log("boo");
+        tooltip
+        .style("opacity",0.0);
+      });
       //.on("click",clicked);
   
   var text = svg_character.selectAll(".node_group_character")
@@ -207,7 +221,7 @@ function show_bubble_chart(){
       .attr("width",img_width)
       .attr("height",img_height);
 
-  simulation.nodes(personal_data)
+  simulation.nodes(data_selected)
       .force("x",d3.forceX((d)=>yearScale(d.year_double)).strength(0.05))
       .force("y",d3.forceY(height/2).strength(0.05))
       .force("collision",d3.forceCollide().radius((d)=>d.radius).iterations(5))
