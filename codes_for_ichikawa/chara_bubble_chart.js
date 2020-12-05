@@ -27,7 +27,7 @@ var max_year = 0;
 var min_year = 2030;
 var marge = 100;
 var keys = [];
-const fixed_r = 30;
+const fixed_r = 50;
 const img_width = 60;
 const img_height = 60;
 const select_year_range = 3; //年を選んだ時、その前後3年のデータのみを取ってくる
@@ -192,8 +192,8 @@ function showBubbleChart() {
     .append("text")
     .attr("class", "chara_node")
     .attr("font-size", 9)
-    .attr("stroke", "none")
-    .attr("fill", "black")
+    .attr("stroke", "white")
+    .attr("text-anchor", "middle")
     .text(function (d) { return d.character; });
 
   svg_character.selectAll(".node_group_character")
@@ -231,8 +231,8 @@ function showBubbleChart() {
 
     nodes
       .selectAll("text")
-      .attr("x", (d) => d.x + 10)
-      .attr("y", (d) => d.y + 10);
+      .attr("x", (d) => d.x)
+      .attr("y", (d) => d.y + 40);
 
     nodes
       .selectAll("image")

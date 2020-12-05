@@ -2,7 +2,7 @@ const height = 1000;
 const width = 2000;
 const width_menu = 500;
 var currentTransform = { k: 1, x: 0, y: 0 };
-var actor_selected = false;
+var actorSelected = false;
 const canvas = d3
   .select("body")
   .append("svg")
@@ -16,7 +16,7 @@ canvas
   .attr("fill", "floralwhite");
 var svg = canvas.append("g");
 function zoom(event) {
-  if (!actor_selected) {
+  if (!actorSelected) {
     svg.attr("transform", event.transform);
     currentTransform = event.transform;
   }
@@ -93,7 +93,7 @@ function searchWorks() {
           .attr("value", d.title)
           .on("change", () => {
             d.selected = !d.selected;
-            updateBubble();
+            updateActorsBubble();
           });
         if (d.selected) checkbox.attr("checked", "checked");
         checkboxWrapper.append("div").text(`${d.title}`);
@@ -103,7 +103,7 @@ function searchWorks() {
   }
 }
 
-function updateBubble() {
+function updateActorsBubble() {
   var simulation = d3.forceSimulation()
     .force("collision", d3.forceCollide().radius(d => d.radius + 2))
     .force("center", d3.forceCenter(width / 2, height / 2));
@@ -184,7 +184,7 @@ function clickedActorNode(event, d) {
   //ここに、声優のノードがノードがクリックされたときの挙動を書く感じです。
   const selectedActorNode = d3.select(event.currentTarget);
 
-  if (!actor_selected) {
+  if (!actorSelected) {
     const node = selectedActorNode.select("circle");
     const k = 30;
     svg.transition()
@@ -196,7 +196,7 @@ function clickedActorNode(event, d) {
       .duration(750)
       .attr("transform", `translate(${currentTransform.x},${currentTransform.y})scale(${currentTransform.k})`);
   }
-  actor_selected = !actor_selected;
+  actorSelected = !actorSelected;
 }
 
 
