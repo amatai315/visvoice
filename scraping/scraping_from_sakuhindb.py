@@ -38,7 +38,7 @@ for urlName in url_names:
 # json形式
 # data_json = {}
 # csvファイルのpath
-filename = 'data/voice_actors.csv'
+filename = '../data/voice_actors.csv'
 if actor_number_starting_scraping == 0:
     with open(filename, 'a', encoding='UTF-8') as f:
         writer = csv.writer(f)
@@ -60,8 +60,6 @@ for actor_url in actor_urls:
     while True:
         actor_name = soup.find("h1").text
         actor_name = actor_name.split(":")[0]
-        # if actor_name not in data_json.keys():
-        #     data_json[actor_name] = []
         if not soup.find(attrs={"class": "lk_th"}, text="ID"):
             break
         actor_data_list = soup.find(
@@ -73,10 +71,6 @@ for actor_url in actor_urls:
                 writer = csv.writer(f)
                 writer.writerow([actor_name, actor_data.contents[2].contents[0],
                                 actor_data.contents[3].contents[0].contents[0], actor_data.contents[8].contents[0], actor_data.contents[1].contents[0]])
-            # template = {}
-            # template["jenre"], template["title"], template["character"], template["year"] = actor_data.contents[2].contents[
-            #     0], actor_data.contents[3].contents[0].contents[0], actor_data.contents[8].contents[0], actor_data.contents[1].contents[0]
-            # data_json[actor_name].append(template)
 
         if not soup.find(attrs={"class": "lk_th"}, text="ID").parent.parent.next_sibling:
             break
@@ -87,8 +81,6 @@ for actor_url in actor_urls:
             url = requests.get(next_link)
             soup = BeautifulSoup(url.content, "html.parser")
         else:
-            # fw = codecs.open('data/voice_actors.json', 'a', 'utf-8')
-            # json.dump(data_json, fw, indent=3, ensure_ascii=False)
             break
 
 print("all process done")

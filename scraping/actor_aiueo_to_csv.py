@@ -14,7 +14,6 @@ for shiin in top_char_s:
             continue
         top_char.append(shiin + boin)
         
-#url_names = ["https://sakuhindb.com/anime/alph_info/j/people_voice_a.html"]
 for link in  top_char:
     url_names.append("https://sakuhindb.com/anime/alph_info/j/people_voice_" +link+".html")
 
@@ -27,10 +26,9 @@ for urlName in url_names:
     for actor in all_man:
         tag = actor.parent['href']
         name = actor.contents[0]
-        #print("https://sakuhindb.com/" +tag, name)
         csv_list.append([name, "https://sakuhindb.com/" + tag])
     
-file = open("aiueo_actor.csv","w")
+file = open("../data/aiueo_actor.csv","w")
 writecsv = csv.writer(file, lineterminator='\n')
 
 writecsv.writerows(csv_list)

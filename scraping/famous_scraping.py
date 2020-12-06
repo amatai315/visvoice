@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup
 import requests
 import sys
 import time
-sys.path.append('/usr/local/lib/python3.9/site-packages')
 
 famous_seiyuu = []
 urls = ["https://ranking.net/rankings/best-male-voice-actor",
@@ -83,5 +82,5 @@ for i in url_name.values():
                 break
         else:
             break
-fw = codecs.open('data/voice_actors.json', 'w', 'utf-8')
+fw = codecs.open('../data/voice_actors.json', 'w', 'utf-8')
 json.dump(data_json, fw, indent=3, ensure_ascii=False)
