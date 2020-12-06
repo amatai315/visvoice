@@ -10,6 +10,43 @@ var forPlot = [];
 var scale = [];
 let color = d3.rgb("#fbc2eb");
 
+///
+const width2 = 1000;
+const height2 = 800;
+const width_menu = 300;
+const height_menu = 300;
+
+// var menu_character = d3.select("body")
+//   .append("div")
+//   .attr("width", width_menu)
+//   .attr("height", height_menu)
+//   .attr("class", "menu_character");
+
+// var svg_character = d3.select("body")
+//   .append("svg")
+//   .attr("width", width2)
+//   .attr("height", height2)
+//   .attr("class", "svg_chara");
+
+var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+var month_day_sum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
+//const person = "子安武人"; 
+const person = "沢城みゆき";  //全体の実装では、声優のノードをタッチした時に、ここに声優の名前を取得できるようにする
+
+var personal_data = [];
+var yearScale = [];
+var max_year = 0;
+var min_year = 2030;
+var marge = 100;
+var keys = [];
+const fixed_r = 35;
+const img_width = 60;
+const img_height = 60;
+const select_year_range = 3; //年を選んだ時、その前後3年のデータのみを取ってくる
+const select_node_num = 20; //画面に表示する最大のノード数
+//上の二つは、そのうちボタンとかつけてユーザーが選べるようにする
+
 var svg = d3
   .select("body")
   .append("div")
@@ -19,8 +56,12 @@ var svg = d3
   .attr("width", width)
   .attr("height", height);
 
-d3.json("data/voice_actors.json").then(function (data) {
-  // let dataset = {};
+var tooltip = d3.select("body")
+  .append("div")
+  .attr("class", "tooltip")
+  .style("visibility", "hidden");
+
+d3.json("voice_actors.json").then(function (data) {
   focus = data["沢城みゆき"];
   focus.forEach((d) => {
     time = d.year.slice(0, 4);
@@ -54,18 +95,6 @@ d3.json("data/voice_actors.json").then(function (data) {
   var axisx = d3.axisBottom(xScale).ticks(scale[1] - scale[0]);
   var axisy = d3.axisLeft(yScale).ticks(5);
 
-  // svg
-  //   .append("g")
-  //   .attr("transform", "translate(" + 0 + "," + (height - margin.bottom) + ")")
-  //   .call(axisx)
-  //   .append("text")
-  //   .attr("fill", "black")
-  //   .attr("x", (width - margin.left - margin.right) / 2 + margin.left)
-  //   .attr("y", 35)
-  //   .attr("text-anchor", "middle")
-  //   .attr("font-size", "10pt")
-  //   .attr("font-weight", "bold")
-  //   .text("year");
 
   svg
     .append("g")
@@ -168,17 +197,17 @@ d3.json("data/voice_actors.json").then(function (data) {
     .tickValues(timelabel)
     .on("onchange", (val) => {
       console.log(val);
-      // d3.select("p#timevalue").text(val);
+      showBubbleChart(val);
     });
   var gTime = d3
     .select("g#timeslider")
     .attr(
       "transform",
       "translate(" +
-        (margin.left - 23) +
-        "," +
-        (height - margin.bottom - 10) +
-        ")"
+      (margin.left - 23) +
+      "," +
+      (height - margin.bottom - 10) +
+      ")"
     )
     .append("g")
     .attr("transform", "translate(25,10)");
@@ -186,4 +215,215 @@ d3.json("data/voice_actors.json").then(function (data) {
   gTime.call(sliderTime);
   //初期表示値
   // d3.select("p#timevalue").text(mintime);
+
+
+  /////ここからマージ
+
+
+
+  d3.json("./voice_actors_with_img_url.json").then(function (data) {
+    personal_data = data[person];
+
+
+    personal_data.forEach(function (d) {
+      var year = parseFloat(d.year.slice(0, 4));
+      var month = parseFloat(d.year.slice(5, 7));
+      var day = parseFloat(d.year.slice(8, 10));
+      year += (month_day_sum[month] + day) / 365;
+
+      d.year_double = year; //作品の年を数値に変換したものを付け加える
+      if (max_year < year) { max_year = year; }
+      if (min_year > year) { min_year = year; }
+
+      if (keys.indexOf(d.jenre) == -1) {
+        keys.push(d.jenre);  //含まれるジャンルの配列
+      }
+
+      d.radius = fixed_r; //ノードの半径
+    });
+
+    keys.sort();
+
+    max_year = Math.ceil(max_year);
+    min_year = Math.floor(min_year);
+    yearScale = d3.scaleLinear().domain([min_year, max_year]).range([marge, width - marge]);
+
+    var size = 20;
+    var svg_labelcolor = svg
+      .append("g")
+      .attr("class", "labelcolor");
+    svg_labelcolor.selectAll("myrect")
+      .data(keys)
+      .enter()
+      .append("rect")
+      .attr("x", 100)
+      .attr("y", function (d, i) { return 10 + i * (size + 5) }) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("width", size)
+      .attr("height", size)
+      .style("fill", function (d) { return colorScale(d) });
+
+    // Add one dot in the legend for each name.
+    svg_labelcolor.selectAll("mylabels")
+      .data(keys)
+      .enter()
+      .append("text")
+      .attr("x", 100 + size * 1.2)
+      .attr("y", function (d, i) { return 10 + i * (size + 5) + (size * 3 / 4) }) // 100 is where the first dot appears. 25 is the distance between dots
+      .style("fill", function (d) { return colorScale(d) })
+      .text(function (d) { return d })
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle");
+
+  });
+
+  function showBubbleChart(val) {
+    var input = val;
+
+
+
+    let xScale = d3.scaleLinear()
+      .domain([input - select_year_range, input + select_year_range])
+      .range([marge, width2 - marge]);
+
+    //初期化操作
+    const element = document.getElementById("x_axis");
+    if (element != null) { element.remove(); }
+    //svg_character.selectAll("circle").remove();
+    //svg_character.selectAll("text").remove();
+    svg.selectAll(".node_group_character").remove();
+    //svg.selectAll("g").remove();
+
+
+    yearScale = d3.scaleLinear().domain([input - select_year_range, input + select_year_range])
+      .range([marge, width2 - marge]);
+
+    var simulation = d3.forceSimulation()
+      /*.force("link", d3.forceLink().id(function(d){
+        return d.character;
+      }))*/
+      .force("charge", d3.forceManyBody().strength(5));
+    //.force("center", d3.forceCenter(width/2, height/2)); //反発力の設定
+
+    /*data_selected: 半径が大きい上位20個を取ってくる配列*/
+    data_selected = []
+    data_selected = personal_data
+      .filter(function (d) {
+        if ((d.year_double <= input + select_year_range) && (d.year_double >= input - select_year_range)) {
+          return true;
+        }
+      });
+
+    data_selected.sort(function (a, b) {
+      if (a.radius > b.radius) return -1;
+      if (a.radius < b.radius) return 1;
+      return 0;
+    });
+
+    data_selected = data_selected.slice(0, select_node_num);
+
+    console.log(input);
+    console.log(data_selected);
+
+
+    var nodes = svg
+      .selectAll("circle")
+      .data(data_selected)
+      .enter()
+      .append("g")
+      .attr("class", "node_group_character")
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+    //console.log(nodes);
+    var circles = svg.selectAll(".node_group_character")
+      .append("circle")
+      .attr("id", (d) => d.character)
+      .attr("class", "chara_node")
+      .attr("fill", function (d) { return colorScale(d.jenre); })
+      .attr("class", function (d) { return "node_" + d.character; })
+      .on("mouseover", mouseOver)
+      .on("mouseout", mouseOut)
+      .attr("r", (d) => d.radius);
+    //.on("click",clicked);
+
+    svg.selectAll(".node_group_character").append("clipPath")
+      .attr("id", (d) => `clip-${d.character.replace(' ', '')}`)
+      .append("use")
+      .attr("xlink:href", (d) => `#${d.character.replace(' ', '')}`)
+
+
+    
+    svg.selectAll(".node_group_character")
+      .append("image")
+      .attr("clip-path",(d)=>`url(#clip-${d.character.replace(' ', '')})`)
+      .attr("xlink:href", (d) => d.img_url)
+      .attr("width", 200)
+      .attr("height", 200)
+      .on("mouseover", mouseOver)
+      .on("mouseout", mouseOut);
+
+    var text = svg.selectAll(".node_group_character")
+      .append("text")
+      .attr("class", "chara_node")
+      .attr("font-size", 10)
+      .attr("stroke", "none")
+      .attr("fill", "black")
+      .text(function (d) { return d.character.replace(' ', ''); });
+
+    simulation.nodes(data_selected)
+      // .force("x", d3.forceX((d) => yearScale(d.year_double)).strength(0.05))
+      // .force("y", d3.forceY(height / 2).strength(0.05))
+      .force("x", d3.forceX(width / 2).strength(0.1))
+      .force("y", d3.forceY(height / 4).strength(0.1))
+      .force("charge", d3.forceManyBody().strength(1))
+      .force("collision", d3.forceCollide().radius((d) => d.radius).iterations(5))
+      .on("tick", ticked);
+
+    function mouseOver(event, d) {
+      tooltip.html("anime:" + d.title + "<br/>character:" + d.character)
+        .style("left", (event.pageX) + "px")
+        .style("top", (event.pageY) + "px")
+        .style("visibility", "visible");
+    }
+
+    function mouseOut() {
+      tooltip.style("visibility", "hidden");
+    }
+
+    function ticked() {
+      nodes
+        .selectAll("circle")
+        .attr("cx", (d) => d.x)
+        .attr("cy", (d) => d.y);
+
+      nodes
+        .selectAll("text")
+        .attr("x", (d) => d.x + 10)
+        .attr("y", (d) => d.y + 10);
+
+      nodes
+        .selectAll("image")
+        .attr("x", (d) => d.x - img_width / 2)
+        .attr("y", (d) => d.y - img_height / 2);
+    }
+
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+    }
+
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+  }
 });
