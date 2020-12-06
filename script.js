@@ -22,7 +22,11 @@ function zoom(event) {
   }
 }
 
-
+const selectedWorkTextElement = canvas
+  .append("text")
+  .attr("font-size", 50)
+  .attr("x", 20)
+  .attr("y", 50);
 
 function transform(t) {
   return function (d) {
@@ -39,16 +43,24 @@ const menu = d3
 
 const worksList = [];
 
-d3.csv("./data/voice_actors.csv").then((data) => {
-  data.forEach((d) => {
+const dataProcessingText = canvas
+  .append("text")
+  .attr("x", width / 2)
+  .attr("y", height / 2)
+  .attr("font-size", 60)
+  .attr("text-anchor", "middle")
+  .text("データ処理中です");
+
+d3.csv("./data/voice_actors.csv").then(data => {
+
+  data.forEach(d => {
     const work = worksList.find(
-      (w) => w.title == d.title && w.jenre == d.jenre
+      w => w.title == d.title && w.jenre == d.jenre
     );
     if (work === undefined) {
       worksList.push({
         jenre: d.jenre,
         title: d.title,
-        selected: false,
         dataAboutWork: [d],
       });
     } else {
@@ -56,6 +68,7 @@ d3.csv("./data/voice_actors.csv").then((data) => {
     }
   });
 
+  dataProcessingText.remove();
   console.log(worksList);
 });
 
@@ -87,39 +100,37 @@ function searchWorks() {
           .select("#search-result-list")
           .append("div")
           .attr("class", "work");
-        const checkbox = checkboxWrapper
-          .append("input")
-          .attr("type", "checkbox")
-          .attr("value", d.title)
-          .on("change", () => {
-            d.selected = !d.selected;
-            updateActorsBubble();
-          });
-        if (d.selected) checkbox.attr("checked", "checked");
+
         checkboxWrapper.append("div").text(`${d.title}`);
+        checkboxWrapper
+          .append("button")
+          .attr("value", d.title)
+          .text("Apply")
+          .on("click", () => {
+            selectedWorkTextElement.text(d.title);
+            updateActorsBubble(d.title);
+          });
       });
     const hitNum = d3.selectAll("#search-result-list .work").size();
     d3.selectAll("#search-result-hit-num").text(`${hitNum}件ヒットしました`);
   }
 }
 
-function updateActorsBubble() {
+function updateActorsBubble(titleSelected) {
   var simulation = d3.forceSimulation()
     .force("collision", d3.forceCollide().radius(d => d.radius + 2))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
   const validDataList = [];
   worksList
-    .filter((w) => w.selected)
-    .forEach((w) => {
-      w.dataAboutWork.forEach((d) => {
-        validDataList.push(d);
-      });
+    .find(w => w.title == titleSelected)
+    .dataAboutWork.forEach(d => {
+      validDataList.push(d);
     });
 
   const actorsAndChars = [];
 
-  validDataList.forEach((d) => {
+  validDataList.forEach(d => {
     actorsAndChars.push({ name: d.name, type: "actor", char: d.character, radius: nodeRadius() });
   });
 
@@ -146,7 +157,7 @@ function updateActorsBubble() {
     .attr("font-size", 12)
     .attr("text-anchor", "middle")
     .attr("stroke", "black")
-    .text((d) => d.char);
+    .text(d => d.char);
 
   nodes
     .append("text")
@@ -154,25 +165,25 @@ function updateActorsBubble() {
     .attr("font-size", 12)
     .attr("text-anchor", "middle")
     .attr("stroke", "black")
-    .text((d) => d.name);
+    .text(d => d.name);
 
   simulation.nodes(actorsAndChars).on("tick", ticked);
 
   function ticked() {
     nodes
       .selectAll("circle")
-      .attr("cx", (d) => d.x)
-      .attr("cy", (d) => d.y);
+      .attr("cx", d => d.x)
+      .attr("cy", d => d.y);
 
     nodes
       .selectAll(".char-name")
-      .attr("x", (d) => d.x)
-      .attr("y", (d) => d.y - 10);
+      .attr("x", d => d.x)
+      .attr("y", d => d.y - 10);
 
     nodes
       .selectAll(".actor-name")
-      .attr("x", (d) => d.x)
-      .attr("y", (d) => d.y + 10);
+      .attr("x", d => d.x)
+      .attr("y", d => d.y + 10);
   }
 
   function nodeRadius() {
@@ -182,18 +193,28 @@ function updateActorsBubble() {
 
 function clickedActorNode(event, d) {
   //ここに、声優のノードがノードがクリックされたときの挙動を書く感じです。
+  //声優名は、d.nameで取得できます。
   const selectedActorNode = d3.select(event.currentTarget);
+  const durationTime = 750;
 
   if (!actorSelected) {
+    selectedWorkTextElement
+      .transition()
+      .duration(durationTime)
+      .attr("opacity", 0);
     const node = selectedActorNode.select("circle");
     const k = 30;
     svg.transition()
-      .duration(750)
+      .duration(durationTime)
       .attr("transform", `translate(${width / 2},${height / 2})scale(${k})
              translate(${-node.attr("cx")},${-node.attr("cy")})`);
   } else {
+    selectedWorkTextElement
+      .transition()
+      .duration(durationTime)
+      .attr("opacity", 1);
     svg.transition()
-      .duration(750)
+      .duration(durationTime)
       .attr("transform", `translate(${currentTransform.x},${currentTransform.y})scale(${currentTransform.k})`);
   }
   actorSelected = !actorSelected;
