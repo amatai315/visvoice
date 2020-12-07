@@ -75,7 +75,6 @@ d3.csv("./data/voice_actors.csv").then(data => {
   });
 
   dataProcessingText.remove();
-  console.log(worksList);
 });
 
 menu.append("div")
@@ -89,23 +88,33 @@ menu
   .on("input", searchWorks);
 
 menu.append("div").attr("id", "search-result-hit-num");
-
-menu.append("div").attr("id", "search-result-list");
+const searchResultListElement = menu.append("div").attr("id", "search-result-list");
+const jenreList = ["アニメ", "ゲーム", "ドラマ", "日本映画", "海外映画", "漫画", "特撮/人形劇", "その他"];
 
 function searchWorks() {
   const searchText = d3.select("#search-text").node().value;
 
-  d3.selectAll("#search-result-list > div").remove();
   d3.selectAll("#search-result-hit-num").text("");
+  d3.selectAll("#search-result-list div").remove();
 
   if (searchText != "") {
+    jenreList.forEach(jenre => {
+      searchResultListElement
+        .append("div")
+        .attr("class", "jenre")
+        .attr("id", `jenre-${jenreToAlphabet(jenre)}`)
+        .text(`${jenre}`)
+        .style("font-weight", "bold");
+    });
+
     worksList
-      .filter((d) => d.title.indexOf(searchText) != -1)
-      .forEach((d) => {
+      .filter(d => d.title.indexOf(searchText) != -1)
+      .forEach(d => {
         const checkboxWrapper = d3
-          .select("#search-result-list")
+          .select(`#jenre-${jenreToAlphabet(d.jenre)}`)
           .append("div")
-          .attr("class", "work");
+          .attr("class", "work")
+          .style("font-weight", "normal")
 
         checkboxWrapper.append("div").text(`${d.title}`);
         checkboxWrapper
@@ -113,12 +122,42 @@ function searchWorks() {
           .attr("value", d.title)
           .text("Apply")
           .on("click", () => {
+            if (actorSelected) {
+              clickedReturnToWorkButton();
+            }
             selectedWorkTextElement.text(d.title);
             updateActorsBubble(d.title);
           });
       });
     const hitNum = d3.selectAll("#search-result-list .work").size();
     d3.selectAll("#search-result-hit-num").text(`${hitNum}件ヒットしました`);
+
+    jenreList.forEach(jenre => {
+      const jenreElement = d3.select(`#jenre-${jenreToAlphabet(jenre)}`)
+      if (jenreElement.selectChildren(".work").size() == 0)
+        jenreElement.remove();
+    });
+  }
+}
+
+function jenreToAlphabet(jenre) {
+  switch (jenre) {
+    case "アニメ":
+      return "anime";
+    case "ゲーム":
+      return "game";
+    case "ドラマ":
+      return "dorama";
+    case "日本映画":
+      return "japanese-movie";
+    case "海外映画":
+      return "foreign-movie";
+    case "漫画":
+      return "comic";
+    case "特撮/人形劇":
+      return "special-photographing-and-puppet-show";
+    default:
+      return "others"
   }
 }
 
@@ -233,7 +272,6 @@ function clickedActorNode(event, d) {
       .on("click", clickedReturnToWorkButton);
     actorSelected = !actorSelected;
   }
-
 }
 
 function clickedReturnToWorkButton() {

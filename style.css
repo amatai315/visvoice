@@ -7,6 +7,10 @@ body {
 }
 
 #search-result-list > div > div{
+    display: block;
+}
+
+#search-result-list > div > div > div{
     display: inline;
 }
 
