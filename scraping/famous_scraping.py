@@ -17,7 +17,6 @@ for url in urls:
     for i in seiyuu_list:
         famous_seiyuu.append(i.text)
 
-
 top_char_b = ["a", "i", "u", "e", "o"]
 top_char_s = ["", "k", "s", "t", "n", "h", "m", "y", "r", "w"]
 top_char = []
