@@ -44,6 +44,7 @@ const menu = d3
   .style("width", width_menu);
 
 const worksList = [];
+const actorsDict = {};
 
 const dataProcessingText = canvas
   .append("text")
@@ -54,7 +55,6 @@ const dataProcessingText = canvas
   .text("データ処理中です");
 
 d3.csv("./data/voice_actors.csv").then(data => {
-  const actorsDict = {};
   data.forEach(d => {
     const work = worksList.find(
       w => w.title == d.title && w.jenre == d.jenre
