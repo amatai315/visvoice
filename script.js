@@ -22,6 +22,8 @@ function zoom(event) {
   }
 }
 
+var actorDataSVG;
+
 const selectedWorkTextElement = canvas
   .append("text")
   .attr("font-size", 50)
@@ -208,15 +210,43 @@ function clickedActorNode(event, d) {
       .duration(durationTime)
       .attr("transform", `translate(${width / 2},${height / 2})scale(${k})
              translate(${-node.attr("cx")},${-node.attr("cy")})`);
-  } else {
-    selectedWorkTextElement
+    selectedActorNode
+      .selectAll("text")
       .transition()
       .duration(durationTime)
-      .attr("opacity", 1);
-    svg.transition()
-      .duration(durationTime)
-      .attr("transform", `translate(${currentTransform.x},${currentTransform.y})scale(${currentTransform.k})`);
+      .attr("opacity", 0)
+    actorDataSVG = d3.select("body")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .style("position", "absolute");
+    actorDataSVG.append("rect")
+      .attr("x", 100)
+      .attr("y", 100)
+      .attr("height", 100)
+      .attr("width", 100)
+      .attr("fill", "red")
+      .on("click", clickedReturnToWorkButton);
+    actorSelected = !actorSelected;
   }
+  
+}
+
+function clickedReturnToWorkButton() {
+  const durationTime = 750;
+  selectedWorkTextElement
+    .transition()
+    .duration(durationTime)
+    .attr("opacity", 1);
+  svg.transition()
+    .duration(durationTime)
+    .attr("transform", `translate(${currentTransform.x},${currentTransform.y})scale(${currentTransform.k})`);
+  svg
+    .selectAll("text")
+    .transition()
+    .duration(durationTime)
+    .attr("opacity", 1)
+  actorDataSVG.remove();
   actorSelected = !actorSelected;
 }
 
