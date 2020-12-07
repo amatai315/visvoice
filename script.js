@@ -54,7 +54,7 @@ const dataProcessingText = canvas
   .text("データ処理中です");
 
 d3.csv("./data/voice_actors.csv").then(data => {
-
+  const actorsDict = {};
   data.forEach(d => {
     const work = worksList.find(
       w => w.title == d.title && w.jenre == d.jenre
@@ -68,6 +68,10 @@ d3.csv("./data/voice_actors.csv").then(data => {
     } else {
       work.dataAboutWork.push(d);
     }
+    if (actorsDict[d.name] === undefined) {
+      actorsDict[d.name] = [{ jenre: d.jenre, title: d.title, character: d.character, year: d.year }]
+    } else
+      actorsDict[d.name].push({ jenre: d.jenre, title: d.title, character: d.character, year: d.year })
   });
 
   dataProcessingText.remove();
@@ -229,7 +233,7 @@ function clickedActorNode(event, d) {
       .on("click", clickedReturnToWorkButton);
     actorSelected = !actorSelected;
   }
-  
+
 }
 
 function clickedReturnToWorkButton() {
