@@ -14,21 +14,6 @@ var jenreList = [];
 
 ///
 var colorScale = d3.scaleOrdinal(d3.schemePaired);
-// var colorScale = d3
-//   .scaleOrdinal()
-//   .domain([0, 7])
-//   .range([
-//     "#0190dc",
-//     "#ed730b",
-//     "#ad0097",
-//     "#c3cd68",
-//     "#e8094f",
-//     "#00652d",
-//     "#a51507",
-//     "#fdaee2",
-//     "#ff9664",
-//     "#942858",
-//   ]);
 
 var month_day_sum = [
   0,
@@ -421,8 +406,12 @@ d3.json("voice_actors.json").then(function (data) {
       })
       .on("mouseover", mouseOver)
       .on("mouseout", mouseOut)
-      .attr("r", (d) => d.radius);
-    //.on("click",clicked);
+      .attr("r", (d) => d.radius)
+      .on("click", function (d, click_node) {
+        const selectedcharaNode = d3.select(d.currentTarget);
+        console.log(d);
+        selectedcharaNode.transition().duration(750).attr("r", 50);
+      });
 
     svg
       .selectAll(".node_group_character")
@@ -467,8 +456,6 @@ d3.json("voice_actors.json").then(function (data) {
       .on("tick", ticked);
 
     function mouseOver(event, d) {
-      // console.log(d);
-      circles.data(d).attr("r", 50);
       tooltip
         .html("anime:" + d.title + "<br/>character:" + d.character)
         .style("left", event.pageX + "px")
