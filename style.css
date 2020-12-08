@@ -1,61 +1,58 @@
 body {
-    display: flex;
+  display: flex;
 }
 
-#search-result-list > div{
-    display: block;
+#search-result-list>div {
+  display: block;
 }
 
-#search-result-list > div > div{
-    display: block;
+#search-result-list>div>div {
+  display: block;
 }
 
-#search-result-list > div > div > div{
-    display: inline;
+#search-result-list>div>div>div {
+  display: inline;
 }
 
 #search-result-hit-num {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .tooltip {
-    position: absolute;
-    text-align: center;
-    width: auto;
-    height: auto;
-    padding: 5px;
-    font: 12px;
-    background: #c6acf7fa;
-    border-radius: 3px;
-    /* -webkit-box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8);
+  position: absolute;
+  text-align: center;
+  width: auto;
+  height: auto;
+  padding: 5px;
+  font: 12px;
+  background: #c6acf7fa;
+  border-radius: 3px;
+  /* -webkit-box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8);
     -moz-box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8);
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8); */
-    /* visibility: hidden; */
-  }
+  /* visibility: hidden; */
+}
 
+#year_range_text {
+  position: absolute;
+  left: 300px;
+  top: 50px;
+}
 
-  #year_range_text{
-    position: absolute;
-    left: 300px;
-    top: 50px;
-  }
-  
-  
-  #year_range{
-    position: absolute;
-    left: 300px;
-    top: 70px;
-  }
-  
-  #num_node_text{
-    position: absolute;
-    left: 450px;
-    top: 50px;
-  }
-  
-  #num_node{
-    position: absolute;
-    left: 450px;
-    top: 70px;
-  }
-  
+#year_range {
+  position: absolute;
+  left: 300px;
+  top: 70px;
+}
+
+#num_node_text {
+  position: absolute;
+  left: 450px;
+  top: 50px;
+}
+
+#num_node {
+  position: absolute;
+  left: 450px;
+  top: 70px;
+}

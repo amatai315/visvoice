@@ -14,10 +14,10 @@ canvas
   .attr("width", "100%")
   .attr("height", "100%")
   .attr("fill", "floralwhite");
-var svg = canvas.append("g");
+const animeSelectionSVG = canvas.append("g");
 function zoom(event) {
   if (!actorSelected) {
-    svg.attr("transform", event.transform);
+    animeSelectionSVG.attr("transform", event.transform);
     currentTransform = event.transform;
   }
 }
@@ -75,6 +75,7 @@ d3.csv("data/voice_actors_greater_than_100characters.csv").then(data => {
   });
 
   dataProcessingText.remove();
+  searchWorks();
 });
 
 menu.append("div").text("作品名で検索");
@@ -116,18 +117,16 @@ function searchWorks() {
         .text(`${jenre}`)
         .style("font-weight", "bold");
     });
-
     worksList
       .filter((d) => d.title.indexOf(searchText) != -1)
       .forEach((d) => {
-        const checkboxWrapper = d3
+        const applyWorkButtonWrapper = d3
           .select(`#jenre-${jenreToAlphabet(d.jenre)}`)
           .append("div")
           .attr("class", "work")
           .style("font-weight", "normal");
-
-        checkboxWrapper.append("div").text(`${d.title}`);
-        checkboxWrapper
+        applyWorkButtonWrapper.append("div").text(`${d.title}`);
+        applyWorkButtonWrapper
           .append("button")
           .attr("value", d.title)
           .text("Apply")
@@ -141,12 +140,39 @@ function searchWorks() {
       });
     const hitNum = d3.selectAll("#search-result-list .work").size();
     d3.selectAll("#search-result-hit-num").text(`${hitNum}件ヒットしました`);
-
     jenreList.forEach((jenre) => {
       const jenreElement = d3.select(`#jenre-${jenreToAlphabet(jenre)}`);
       if (jenreElement.selectChildren(".work").size() == 0)
         jenreElement.remove();
     });
+  } else {
+    const recommendedWorks = ["涼宮ハルヒの憂鬱", "ソードアート・オンライン", "とある魔術の禁書目録<インデックス>", "氷菓", "ノーゲーム・ノーライフ"];
+    searchResultListElement
+      .append("div")
+      .attr("class", "jenre")
+      .attr("id", "recommended-works")
+      .text("おすすめ作品")
+      .style("font-weight", "bold");
+    worksList.filter(work => recommendedWorks.indexOf(work.title) != -1)
+      .forEach(d => {
+        const applyWorkButtonWrapper = d3
+          .select("#recommended-works")
+          .append("div")
+          .attr("class", "work")
+          .style("font-weight", "normal");
+        applyWorkButtonWrapper.append("div").text(`${d.title}`);
+        applyWorkButtonWrapper
+          .append("button")
+          .attr("value", d.title)
+          .text("Apply")
+          .on("click", () => {
+            if (actorSelected) {
+              clickedReturnToWorkButton();
+            }
+            selectedWorkTextElement.text(d.title);
+            updateActorsBubble(d.title);
+          });
+      });
   }
 }
 
@@ -186,8 +212,6 @@ function updateActorsBubble(titleSelected) {
     .dataAboutWork.forEach((d) => {
       validDataList.push(d);
     });
-  
-  console.log(validDataList);
 
   const actorsAndChars = [];
 
@@ -195,10 +219,10 @@ function updateActorsBubble(titleSelected) {
     actorsAndChars.push({ name: d.name, type: "actor", char: d.character, image_link: d.image_link, radius: nodeRadius() });
   });
 
-  svg.selectAll("line").remove();
-  svg.selectAll("g").remove();
+  animeSelectionSVG.selectAll("line").remove();
+  animeSelectionSVG.selectAll("g").remove();
 
-  const nodes = svg
+  const nodes = animeSelectionSVG
     .selectAll("circle")
     .data(actorsAndChars)
     .enter()
@@ -230,13 +254,13 @@ function updateActorsBubble(titleSelected) {
 
   const imageWidth = 60;
   const imageHeight = 60;
-  
+
   nodes
     .append("image")
     .attr("width", imageWidth)
     .attr("height", imageHeight)
     .attr("text-anchor", "middle")
-    .attr("xlink:href", d => d.image_link)
+    .attr("xlink:href", d => d.image_link);
 
   simulation.nodes(actorsAndChars).on("tick", ticked);
 
@@ -280,7 +304,7 @@ function clickedActorNode(event, d) {
       .attr("opacity", 0);
     const node = selectedActorNode.select("circle");
     const k = 30;
-    svg
+    animeSelectionSVG
       .transition()
       .duration(durationTime)
       .attr(
@@ -295,6 +319,8 @@ function clickedActorNode(event, d) {
       .attr("opacity", 0)
     selectedActorNode
       .selectAll("image")
+      .transition()
+      .duration(durationTime)
       .attr("opacity", 0)
     actorDataSVG = d3.select("body")
       .append("svg")
@@ -306,7 +332,7 @@ function clickedActorNode(event, d) {
     actorDetail(d.name, actorDataSVG);
     actorDataSVG
       .append("rect")
-      .attr("x", 100)
+      .attr("x", 1100)
       .attr("y", 100)
       .attr("height", 100)
       .attr("width", 100)
@@ -322,16 +348,18 @@ function clickedReturnToWorkButton() {
     .transition()
     .duration(durationTime)
     .attr("opacity", 1);
-  svg.transition()
+  animeSelectionSVG.transition()
     .duration(durationTime)
     .attr("transform", `translate(${currentTransform.x},${currentTransform.y})scale(${currentTransform.k})`);
-  svg
+  animeSelectionSVG
     .selectAll("text")
     .transition()
     .duration(durationTime)
-    .attr("opacity", 1)
-  svg
+    .attr("opacity", 1);
+  animeSelectionSVG
     .selectAll("image")
+    .transition()
+    .duration(durationTime)
     .attr("opacity", 1);
   actorDataSVG.remove();
   actorSelected = !actorSelected;
@@ -351,7 +379,7 @@ function actorDetail(actor, actorDataSVG) {
   var forStack = [];
   var StackList = [];
   var jenreList = [];
-  
+
 
   ///
   var colorScale = d3.scaleOrdinal(d3.schemePaired);
@@ -400,7 +428,7 @@ function actorDetail(actor, actorDataSVG) {
     .attr("class", "tooltip")
     .style("visibility", "hidden");
 
-  
+
   var focus = actorsDict[person];
   focus.forEach((d) => {
     time = d.year.slice(0, 4);
@@ -551,10 +579,10 @@ function actorDetail(actor, actorDataSVG) {
     .attr(
       "transform",
       "translate(" +
-        (margin.left - 23) +
-        "," +
-        (height - margin.bottom - 10) +
-        ")"
+      (margin.left - 23) +
+      "," +
+      (height - margin.bottom - 10) +
+      ")"
     )
     .append("g")
     .attr("transform", "translate(25,10)");
@@ -566,22 +594,22 @@ function actorDetail(actor, actorDataSVG) {
   /////ここからマージ
 
   const menu_character = d3.select("body")
-  .append("div")
-  .attr("class","menu_character")
-  .attr("id","menu_character");
+    .append("div")
+    .attr("class", "menu_character")
+    .attr("id", "menu_character");
 
   menu_character.append("div")
-  .text("年の幅")
-  .attr("id","year_range_text");
+    .text("年の幅")
+    .attr("id", "year_range_text");
 
   var year_range = menu_character
     .append("input")
-    .attr("type","number")
-    .attr("id","year_range")
-    .attr("value","3")
-    .attr("min","1")
-    .attr("max","10")
-    .on("input",()=>{
+    .attr("type", "number")
+    .attr("id", "year_range")
+    .attr("value", "3")
+    .attr("min", "1")
+    .attr("max", "10")
+    .on("input", () => {
       var now_input = document.getElementById("year_range");
       select_year_range = parseInt(now_input.value);
       showBubbleChart();
@@ -589,22 +617,22 @@ function actorDetail(actor, actorDataSVG) {
 
   menu_character.append("div")
     .text("ノードの数")
-    .attr("id","num_node_text");
-  
+    .attr("id", "num_node_text");
+
   var num_node = menu_character
     .append("input")
-    .attr("type","number")
-    .attr("id","num_node")
-    .attr("class","input")
-    .attr("min","5")
-    .attr("max","40")
-    .attr("step","5")
-    .attr("value","20")
-    .on("input",()=>{
+    .attr("type", "number")
+    .attr("id", "num_node")
+    .attr("class", "input")
+    .attr("min", "5")
+    .attr("max", "40")
+    .attr("step", "5")
+    .attr("value", "20")
+    .on("input", () => {
       var now_input = document.getElementById("num_node");
       select_node_num = parseInt(now_input.value);
       showBubbleChart();
-    });;
+    });
 
 
   personal_data = actorsDict[person];
@@ -850,5 +878,5 @@ function actorDetail(actor, actorDataSVG) {
       d.fy = null;
     }
   }
-//});
+  //});
 }
