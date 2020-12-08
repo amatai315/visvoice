@@ -33,6 +33,7 @@ var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 var month_day_sum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
 //const person = "子安武人"; 
 const person = "沢城みゆき";  //全体の実装では、声優のノードをタッチした時に、ここに声優の名前を取得できるようにする
+//const person = "神木龍之介";
 
 var personal_data = [];
 var yearScale = [];
