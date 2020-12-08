@@ -322,7 +322,11 @@ function clickedReturnToWorkButton() {
     .transition()
     .duration(durationTime)
     .attr("opacity", 1);
+  svg.transition()
+    .duration(durationTime)
+    .attr("transform", `translate(${currentTransform.x},${currentTransform.y})scale(${currentTransform.k})`);
   svg
+    .selectAll("text")
     .transition()
     .duration(durationTime)
     .attr("opacity", 1)
