@@ -54,7 +54,7 @@ const dataProcessingText = canvas
   .attr("text-anchor", "middle")
   .text("データ処理中です");
 
-d3.csv("./data/voice_actors.csv").then(data => {
+d3.csv("data/voice_actors_greater_than_100characters.csv").then(data => {
   data.forEach(d => {
     const work = worksList.find(
       w => w.title == d.title && w.jenre == d.jenre
@@ -69,9 +69,9 @@ d3.csv("./data/voice_actors.csv").then(data => {
       work.dataAboutWork.push(d);
     }
     if (actorsDict[d.name] === undefined) {
-      actorsDict[d.name] = [{ jenre: d.jenre, title: d.title, character: d.character, year: d.year }]
+      actorsDict[d.name] = [{ jenre: d.jenre, title: d.title, character: d.character, year: d.year, hitNum: d.hit_num, imageLink: d.image_link }]
     } else
-      actorsDict[d.name].push({ jenre: d.jenre, title: d.title, character: d.character, year: d.year })
+      actorsDict[d.name].push({ jenre: d.jenre, title: d.title, character: d.character, year: d.year, hitNum: d.hit_num, imageLink: d.image_link })
   });
 
   dataProcessingText.remove();
@@ -172,11 +172,13 @@ function updateActorsBubble(titleSelected) {
     .dataAboutWork.forEach(d => {
       validDataList.push(d);
     });
+  
+  console.log(validDataList);
 
   const actorsAndChars = [];
 
   validDataList.forEach(d => {
-    actorsAndChars.push({ name: d.name, type: "actor", char: d.character, radius: nodeRadius() });
+    actorsAndChars.push({ name: d.name, type: "actor", char: d.character, image_link: d.image_link, radius: nodeRadius() });
   });
 
   svg.selectAll("line").remove();
@@ -212,6 +214,16 @@ function updateActorsBubble(titleSelected) {
     .attr("stroke", "black")
     .text(d => d.name);
 
+  const imageWidth = 60;
+  const imageHeight = 60;
+  
+  nodes
+    .append("image")
+    .attr("width", imageWidth)
+    .attr("height", imageHeight)
+    .attr("text-anchor", "middle")
+    .attr("xlink:href", d => d.image_link)
+
   simulation.nodes(actorsAndChars).on("tick", ticked);
 
   function ticked() {
@@ -223,12 +235,17 @@ function updateActorsBubble(titleSelected) {
     nodes
       .selectAll(".char-name")
       .attr("x", d => d.x)
-      .attr("y", d => d.y - 10);
+      .attr("y", d => d.y - 40);
 
     nodes
       .selectAll(".actor-name")
       .attr("x", d => d.x)
-      .attr("y", d => d.y + 10);
+      .attr("y", d => d.y + 40);
+
+    nodes
+      .selectAll("image")
+      .attr("x", d => d.x - imageWidth / 2)
+      .attr("y", d => d.y - imageHeight / 2);
   }
 
   function nodeRadius() {
@@ -257,6 +274,9 @@ function clickedActorNode(event, d) {
       .selectAll("text")
       .transition()
       .duration(durationTime)
+      .attr("opacity", 0)
+    selectedActorNode
+      .selectAll("image")
       .attr("opacity", 0)
     actorDataSVG = d3.select("body")
       .append("svg")
@@ -288,6 +308,9 @@ function clickedReturnToWorkButton() {
     .transition()
     .duration(durationTime)
     .attr("opacity", 1)
+  svg
+    .selectAll("image")
+    .attr("opacity", 1);
   actorDataSVG.remove();
   actorSelected = !actorSelected;
 }
