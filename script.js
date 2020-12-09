@@ -46,16 +46,22 @@ const menu = d3
 const worksList = [];
 const actorsDict = {};
 
-const dataProcessingText = canvas
-  .append("text")
-  .attr("x", width / 2)
-  .attr("y", height / 2)
-  .attr("font-size", 60)
-  .attr("text-anchor", "middle")
-  .text("データ処理中です");
+// const dataProcessingText = canvas
+//   .append("text")
+//   .attr("x", width / 2)
+//   .attr("y", height / 2)
+//   .attr("font-size", 60)
+//   .attr("text-anchor", "middle")
+//   .text("データ処理中です");
+const processPlace = d3
+  .select("body")
+  .append("div")
+  .attr("class", "loader-wrap");
+const dataProcessingText = processPlace.append("div").attr("class", "loader");
 
-d3.csv("data/voice_actors_greater_than_100characters.csv").then(data => {
-  data.forEach(d => {
+d3.csv("data/voice_actors_greater_than_100characters.csv").then((data) => {
+  var i = 0;
+  data.forEach((d) => {
     const work = worksList.find(
       (w) => w.title == d.title && w.jenre == d.jenre
     );
@@ -69,12 +75,30 @@ d3.csv("data/voice_actors_greater_than_100characters.csv").then(data => {
       work.dataAboutWork.push(d);
     }
     if (actorsDict[d.name] === undefined) {
-      actorsDict[d.name] = [{ jenre: d.jenre, title: d.title, character: d.character, year: d.year, hitNum: d.hit_num, imageLink: d.image_link }]
+      actorsDict[d.name] = [
+        {
+          jenre: d.jenre,
+          title: d.title,
+          character: d.character,
+          year: d.year,
+          hitNum: d.hit_num,
+          imageLink: d.image_link,
+        },
+      ];
     } else
-      actorsDict[d.name].push({ jenre: d.jenre, title: d.title, character: d.character, year: d.year, hitNum: d.hit_num, imageLink: d.image_link })
+      actorsDict[d.name].push({
+        jenre: d.jenre,
+        title: d.title,
+        character: d.character,
+        year: d.year,
+        hitNum: d.hit_num,
+        imageLink: d.image_link,
+        id: i,
+      });
+    i = i + 1;
   });
 
-  dataProcessingText.remove();
+  processPlace.remove();
   searchWorks();
 });
 
@@ -146,15 +170,22 @@ function searchWorks() {
         jenreElement.remove();
     });
   } else {
-    const recommendedWorks = ["涼宮ハルヒの憂鬱", "ソードアート・オンライン", "とある魔術の禁書目録<インデックス>", "氷菓", "ノーゲーム・ノーライフ"];
+    const recommendedWorks = [
+      "涼宮ハルヒの憂鬱",
+      "ソードアート・オンライン",
+      "とある魔術の禁書目録<インデックス>",
+      "氷菓",
+      "ノーゲーム・ノーライフ",
+    ];
     searchResultListElement
       .append("div")
       .attr("class", "jenre")
       .attr("id", "recommended-works")
       .text("おすすめ作品")
       .style("font-weight", "bold");
-    worksList.filter(work => recommendedWorks.indexOf(work.title) != -1)
-      .forEach(d => {
+    worksList
+      .filter((work) => recommendedWorks.indexOf(work.title) != -1)
+      .forEach((d) => {
         const applyWorkButtonWrapper = d3
           .select("#recommended-works")
           .append("div")
@@ -215,8 +246,14 @@ function updateActorsBubble(titleSelected) {
 
   const actorsAndChars = [];
 
-  validDataList.forEach(d => {
-    actorsAndChars.push({ name: d.name, type: "actor", char: d.character, image_link: d.image_link, radius: nodeRadius() });
+  validDataList.forEach((d) => {
+    actorsAndChars.push({
+      name: d.name,
+      type: "actor",
+      char: d.character,
+      image_link: d.image_link,
+      radius: nodeRadius(),
+    });
   });
 
   animeSelectionSVG.selectAll("line").remove();
@@ -260,7 +297,7 @@ function updateActorsBubble(titleSelected) {
     .attr("width", imageWidth)
     .attr("height", imageHeight)
     .attr("text-anchor", "middle")
-    .attr("xlink:href", d => d.image_link);
+    .attr("xlink:href", (d) => d.image_link);
 
   simulation.nodes(actorsAndChars).on("tick", ticked);
 
@@ -272,18 +309,18 @@ function updateActorsBubble(titleSelected) {
 
     nodes
       .selectAll(".char-name")
-      .attr("x", d => d.x)
-      .attr("y", d => d.y - 40);
+      .attr("x", (d) => d.x)
+      .attr("y", (d) => d.y - 40);
 
     nodes
       .selectAll(".actor-name")
-      .attr("x", d => d.x)
-      .attr("y", d => d.y + 40);
+      .attr("x", (d) => d.x)
+      .attr("y", (d) => d.y + 40);
 
     nodes
       .selectAll("image")
-      .attr("x", d => d.x - imageWidth / 2)
-      .attr("y", d => d.y - imageHeight / 2);
+      .attr("x", (d) => d.x - imageWidth / 2)
+      .attr("y", (d) => d.y - imageHeight / 2);
   }
 
   function nodeRadius() {
@@ -316,13 +353,14 @@ function clickedActorNode(event, d) {
       .selectAll("text")
       .transition()
       .duration(durationTime)
-      .attr("opacity", 0)
+      .attr("opacity", 0);
     selectedActorNode
       .selectAll("image")
       .transition()
       .duration(durationTime)
-      .attr("opacity", 0)
-    actorDataSVG = d3.select("body")
+      .attr("opacity", 0);
+    actorDataSVG = d3
+      .select("body")
       .append("svg")
       .attr("id", `detail_${d.name}`)
       .attr("width", width)
@@ -348,9 +386,13 @@ function clickedReturnToWorkButton() {
     .transition()
     .duration(durationTime)
     .attr("opacity", 1);
-  animeSelectionSVG.transition()
+  animeSelectionSVG
+    .transition()
     .duration(durationTime)
-    .attr("transform", `translate(${currentTransform.x},${currentTransform.y})scale(${currentTransform.k})`);
+    .attr(
+      "transform",
+      `translate(${currentTransform.x},${currentTransform.y})scale(${currentTransform.k})`
+    );
   animeSelectionSVG
     .selectAll("text")
     .transition()
@@ -371,7 +413,6 @@ function actorDetail(actor, actorDataSVG) {
   var margin = { top: 30, bottom: 60, right: 30, left: 60 };
   var time = 0;
   let dataset = {};
-  //let focus = [];
   var maxtime = 0;
   var mintime = 0;
   var forPlot = [];
@@ -380,8 +421,6 @@ function actorDetail(actor, actorDataSVG) {
   var StackList = [];
   var jenreList = [];
 
-
-  ///
   var colorScale = d3.scaleOrdinal(d3.schemePaired);
 
   var month_day_sum = [
@@ -427,7 +466,6 @@ function actorDetail(actor, actorDataSVG) {
     .append("g")
     .attr("class", "tooltip")
     .style("visibility", "hidden");
-
 
   var focus = actorsDict[person];
   focus.forEach((d) => {
@@ -579,10 +617,10 @@ function actorDetail(actor, actorDataSVG) {
     .attr(
       "transform",
       "translate(" +
-      (margin.left - 23) +
-      "," +
-      (height - margin.bottom - 10) +
-      ")"
+        (margin.left - 23) +
+        "," +
+        (height - margin.bottom - 10) +
+        ")"
     )
     .append("g")
     .attr("transform", "translate(25,10)");
@@ -593,14 +631,13 @@ function actorDetail(actor, actorDataSVG) {
 
   /////ここからマージ
 
-  const menu_character = d3.select("body")
+  const menu_character = d3
+    .select("body")
     .append("div")
     .attr("class", "menu_character")
     .attr("id", "menu_character");
 
-  menu_character.append("div")
-    .text("年の幅")
-    .attr("id", "year_range_text");
+  menu_character.append("div").text("年の幅").attr("id", "year_range_text");
 
   var year_range = menu_character
     .append("input")
@@ -615,9 +652,7 @@ function actorDetail(actor, actorDataSVG) {
       showBubbleChart();
     });
 
-  menu_character.append("div")
-    .text("ノードの数")
-    .attr("id", "num_node_text");
+  menu_character.append("div").text("ノードの数").attr("id", "num_node_text");
 
   var num_node = menu_character
     .append("input")
@@ -633,7 +668,6 @@ function actorDetail(actor, actorDataSVG) {
       select_node_num = parseInt(now_input.value);
       showBubbleChart();
     });
-
 
   personal_data = actorsDict[person];
   console.log(personal_data[0]);
@@ -655,8 +689,13 @@ function actorDetail(actor, actorDataSVG) {
     if (keys.indexOf(d.jenre) == -1) {
       keys.push(d.jenre); //含まれるジャンルの配列
     }
-
-    d.radius = fixed_r; //ノードの半径
+    // console.log(Math.log10(d.hitNum));
+    //ノードの半径
+    if (Math.log10(d.hitNum) * 10 < 20) {
+      d.radius = 20;
+    } else {
+      d.radius = Math.log10(d.hitNum) * 10;
+    }
   });
 
   keys.sort();
@@ -773,7 +812,7 @@ function actorDetail(actor, actorDataSVG) {
     var circles = svg
       .selectAll(".node_group_character")
       .append("circle")
-      .attr("id", (d) => d.character)
+      .attr("id", (d) => d.id)
       .attr("class", "chara_node")
       .attr("fill", function (d) {
         return colorScale(d.jenre);
@@ -787,23 +826,23 @@ function actorDetail(actor, actorDataSVG) {
       .on("click", function (d, click_node) {
         const selectedcharaNode = d3.select(d.currentTarget);
         console.log(d);
-        selectedcharaNode.transition().duration(750).attr("r", 50);
+        // selectedcharaNode.transition().duration(750).attr("r", 50);
       });
 
     svg
       .selectAll(".node_group_character")
       .append("clipPath")
-      .attr("id", (d) => `clip-${d.character.replace(" ", "")}`)
+      .attr("id", (d) => `clip-${d.id}`)
       .append("use")
-      .attr("xlink:href", (d) => `#${d.character.replace(" ", "")}`);
+      .attr("xlink:href", (d) => `#${d.id}`);
 
     svg
       .selectAll(".node_group_character")
       .append("image")
-      .attr("clip-path", (d) => `url(#clip-${d.character.replace(" ", "")})`)
-      .attr("xlink:href", (d) => d.img_url)
-      .attr("width", img_width)
-      .attr("height", img_height)
+      .attr("clip-path", (d) => `url(#clip-${d.id})`)
+      .attr("xlink:href", (d) => d.imageLink)
+      .attr("width", img_width * 2)
+      .attr("height", img_height * 2)
       .on("mouseover", mouseOver)
       .on("mouseout", mouseOut);
 
@@ -857,8 +896,8 @@ function actorDetail(actor, actorDataSVG) {
 
       nodes
         .selectAll("image")
-        .attr("x", (d) => d.x - img_width / 2)
-        .attr("y", (d) => d.y - img_height / 2);
+        .attr("x", (d) => d.x - img_width)
+        .attr("y", (d) => d.y - img_height);
     }
 
     function dragstarted(event, d) {

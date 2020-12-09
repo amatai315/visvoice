@@ -184,32 +184,8 @@ d3.json("voice_actors.json").then(function (data) {
         })
     );
 
-  // var linearGradient = svg
-  //   .append("defs")
-  //   .append("linearGradient")
-  //   .attr("id", "gradient")
-  //   .attr("gradientTransform", "rotate(90)");
-
-  // linearGradient
-  //   .append("stop")
-  //   .attr("class", "stop-left")
-  //   .attr("offset", "0%")
-  //   .attr("stop-color", "#fbc2eb");
-
-  // linearGradient
-  //   .append("stop")
-  //   .attr("class", "stop-right")
-  //   .attr("offset", "100%")
-  //   .attr("stop-color", "#a6c1ee");
-
   let totalLength = line.node().getTotalLength();
-  // line
-  //   .attr("stroke-dasharray", totalLength + " " + totalLength)
-  //   .attr("stroke-dashoffset", totalLength)
-  //   .transition()
-  //   .duration(1000)
-  //   .ease(d3.easeCircleInOut)
-  //   .attr("stroke-dashoffset", 0);
+
   linearea
     .style("opacity", 0)
     .transition()
@@ -219,7 +195,6 @@ d3.json("voice_actors.json").then(function (data) {
     .style("opacity", 1);
 
   //スライドバー設定
-  // var slidevar = d3.select("svg#field").append("g").attr("id", "timevalue");
   var timevalue = svg.append("g").attr("id", "timeslider");
 
   var sliderTime = d3
