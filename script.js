@@ -1,6 +1,7 @@
 const height = 1000;
 const width = 2000;
 const width_menu = 500;
+var colorScale = d3.scaleOrdinal(d3.schemePaired);
 var currentTransform = { k: 1, x: 0, y: 0 };
 var actorSelected = false;
 const canvas = d3
@@ -98,7 +99,7 @@ d3.csv("data/voice_actors_greater_than_100characters.csv").then((data) => {
     i = i + 1;
   });
 
-  processPlace.remove();
+  processPlace.transition().delay(500).remove();
   searchWorks();
 });
 
@@ -176,6 +177,8 @@ function searchWorks() {
       "とある魔術の禁書目録<インデックス>",
       "氷菓",
       "ノーゲーム・ノーライフ",
+      "鬼滅の刃",
+      "四月は君の嘘",
     ];
     searchResultListElement
       .append("div")
@@ -235,8 +238,20 @@ function updateActorsBubble(titleSelected) {
       "collision",
       d3.forceCollide().radius((d) => d.radius + 2)
     )
-    .force("x", d3.forceX().strength(0.05).x(width / 2))
-    .force("y", d3.forceY().strength(0.05).y(height / 2))
+    .force(
+      "x",
+      d3
+        .forceX()
+        .strength(0.05)
+        .x(width / 2)
+    )
+    .force(
+      "y",
+      d3
+        .forceY()
+        .strength(0.05)
+        .y(height / 2)
+    )
     .force("charge", d3.forceManyBody().strength(1))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
@@ -268,15 +283,19 @@ function updateActorsBubble(titleSelected) {
     .enter()
     .append("g")
     .attr("class", "node_group")
-    .call(d3.drag()
-      .on("start", dragstarted)
-      .on("drag", dragged)
-      .on("end", dragended))
-    .on("click", clickedActorNode);
+    .call(
+      d3
+        .drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended)
+    )
+    .on("click", clickedActorNode)
+    .style("cursor", "pointer");
 
   nodes
     .append("circle")
-    .attr("stroke", "black")
+    .attr("stroke", "pink")
     .attr("fill", "white")
     .attr("r", (d) => d.radius);
 
@@ -347,7 +366,6 @@ function updateActorsBubble(titleSelected) {
     d.fy = null;
   }
 
-
   function nodeRadius() {
     return 60;
   }
@@ -393,14 +411,23 @@ function clickedActorNode(event, d) {
       .style("position", "absolute");
     //
     actorDetail(d.name, actorDataSVG);
+    // actorDataSVG
+    //   .append("circle")
+    //   .attr("x", 1100)
+    //   .attr("y", 100)
+    //   .attr("height", 100)
+    //   .attr("width", 100)
+    //   .attr("fill", "red")
+    //   .on("click", clickedReturnToWorkButton);
     actorDataSVG
-      .append("rect")
+      .append("image")
+      .attr("xlink:href", "./image/share-solid.svg")
       .attr("x", 1100)
       .attr("y", 100)
-      .attr("height", 100)
       .attr("width", 100)
-      .attr("fill", "red")
-      .on("click", clickedReturnToWorkButton);
+      .attr("height", 100)
+      .on("click", clickedReturnToWorkButton)
+      .style("cursor", "pointer");
     actorSelected = !actorSelected;
   }
 }
@@ -431,8 +458,7 @@ function clickedReturnToWorkButton() {
   actorDataSVG.remove();
   actorSelected = !actorSelected;
 
-  d3.select("#menu_character")
-  .remove();
+  d3.select("#menu_character").remove();
 }
 
 function actorDetail(actor, actorDataSVG) {
@@ -645,10 +671,10 @@ function actorDetail(actor, actorDataSVG) {
     .attr(
       "transform",
       "translate(" +
-      (margin.left - 23) +
-      "," +
-      (height - margin.bottom - 10) +
-      ")"
+        (margin.left - 23) +
+        "," +
+        (height - margin.bottom - 10) +
+        ")"
     )
     .append("g")
     .attr("transform", "translate(25,10)");
@@ -717,7 +743,6 @@ function actorDetail(actor, actorDataSVG) {
     if (keys.indexOf(d.jenre) == -1) {
       keys.push(d.jenre); //含まれるジャンルの配列
     }
-    // console.log(Math.log10(d.hitNum));
     //ノードの半径
     if (Math.log10(d.hitNum) * 10 < 20) {
       d.radius = 20;
@@ -803,7 +828,7 @@ function actorDetail(actor, actorDataSVG) {
         })
       )
       .force("charge", d3.forceManyBody().strength(5));
-    //.force("center", d3.forceCenter(width/2, height/2)); //反発力の設定
+    // .force("center", d3.forceCenter(width / 2, height / 2)); //反発力の設定
 
     /*data_selected: 半径が大きい上位20個を取ってくる配列*/
     data_selected = [];
@@ -837,6 +862,7 @@ function actorDetail(actor, actorDataSVG) {
           .on("drag", dragged)
           .on("end", dragended)
       );
+
     var circles = svg
       .selectAll(".node_group_character")
       .append("circle")
@@ -845,18 +871,39 @@ function actorDetail(actor, actorDataSVG) {
       .attr("fill", function (d) {
         return colorScale(d.jenre);
       })
+      .attr("stroke", function (d) {
+        return colorScale(d.jenre);
+      })
+      .attr("stroke-width", 2.5)
       .attr("class", function (d) {
         return "node_" + d.character;
       })
       .on("mouseover", mouseOver)
       .on("mouseout", mouseOut)
-      .attr("r", (d) => d.radius)
       .on("click", function (d, click_node) {
         const selectedcharaNode = d3.select(d.currentTarget);
         console.log(d);
-        // selectedcharaNode.transition().duration(750).attr("r", 50);
+      })
+      .attr("x", width / 2)
+      .attr("y", height / 4)
+      .attr("r", 0)
+      .transition()
+      .duration(1500)
+      .ease(d3.easeElasticOut)
+      .tween("circleIn", (d) => {
+        //node image and circle action. use moveable d.r value
+        let i = d3.interpolateNumber(0, d.radius);
+        //what is t??
+        return (t) => {
+          d.r = i(t);
+          simulation.force(
+            "collide",
+            d3.forceCollide((d) => d.r)
+          );
+        };
       });
 
+    d3.selectAll(".node_group_character").style("cursor", "pointer");
     svg
       .selectAll(".node_group_character")
       .append("clipPath")
@@ -867,22 +914,24 @@ function actorDetail(actor, actorDataSVG) {
     svg
       .selectAll(".node_group_character")
       .append("image")
+      .classed("node-icon", true)
       .attr("clip-path", (d) => `url(#clip-${d.id})`)
       .attr("xlink:href", (d) => d.imageLink)
-      .attr("width", img_width * 2)
-      .attr("height", img_height * 2)
       .on("mouseover", mouseOver)
-      .on("mouseout", mouseOut);
+      .on("mouseout", mouseOut)
+      .attr("preserveAspectRatio", "xMidYMid slice");
 
     var text = svg
       .selectAll(".node_group_character")
       .append("text")
       .attr("class", "chara_node")
       .attr("font-size", 10)
-      .attr("stroke", "none")
-      .attr("fill", "black")
+      .attr("stroke", "#mediumblue")
+      .attr("text-anchor", "middle")
+      .transition()
+      .delay(500)
       .text(function (d) {
-        return d.character.replace(" ", "");
+        return d.character;
       });
 
     simulation
@@ -915,17 +964,20 @@ function actorDetail(actor, actorDataSVG) {
       nodes
         .selectAll("circle")
         .attr("cx", (d) => d.x)
-        .attr("cy", (d) => d.y);
+        .attr("cy", (d) => d.y)
+        .attr("r", (d) => d.r);
 
       nodes
         .selectAll("text")
-        .attr("x", (d) => d.x + 10)
-        .attr("y", (d) => d.y + 10);
+        .attr("x", (d) => d.x)
+        .attr("y", (d) => d.y + d.radius + 10);
 
       nodes
         .selectAll("image")
-        .attr("x", (d) => d.x - img_width)
-        .attr("y", (d) => d.y - img_height);
+        .attr("width", (d) => d.r * 2)
+        .attr("height", (d) => d.r * 2)
+        .attr("x", (d) => d.x - d.r)
+        .attr("y", (d) => d.y - d.r);
     }
 
     function dragstarted(event, d) {
@@ -945,5 +997,4 @@ function actorDetail(actor, actorDataSVG) {
       d.fy = null;
     }
   }
-  //});
 }
