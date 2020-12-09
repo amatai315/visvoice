@@ -35,26 +35,26 @@ body {
 
 #year_range_text {
   position: absolute;
-  left: 300px;
-  top: 50px;
+  left: 100px;
+  top: 200px;
 }
 
 #year_range {
   position: absolute;
-  left: 300px;
-  top: 70px;
+  left: 100px;
+  top: 220px;
 }
 
 #num_node_text {
   position: absolute;
-  left: 450px;
-  top: 50px;
+  left: 100px;
+  top: 250px;
 }
 
 #num_node {
   position: absolute;
-  left: 450px;
-  top: 70px;
+  left: 100px;
+  top: 270px;
 }
 /* ローディング画面 */
 .loader-wrap {

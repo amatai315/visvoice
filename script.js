@@ -430,6 +430,9 @@ function clickedReturnToWorkButton() {
     .attr("opacity", 1);
   actorDataSVG.remove();
   actorSelected = !actorSelected;
+
+  d3.select("#menu_character")
+  .remove();
 }
 
 function actorDetail(actor, actorDataSVG) {
