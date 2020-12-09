@@ -235,6 +235,9 @@ function updateActorsBubble(titleSelected) {
       "collision",
       d3.forceCollide().radius((d) => d.radius + 2)
     )
+    .force("x", d3.forceX().strength(0.05).x(width / 2))
+    .force("y", d3.forceY().strength(0.05).y(height / 2))
+    .force("charge", d3.forceManyBody().strength(1))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
   const validDataList = [];
@@ -265,6 +268,10 @@ function updateActorsBubble(titleSelected) {
     .enter()
     .append("g")
     .attr("class", "node_group")
+    .call(d3.drag()
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended))
     .on("click", clickedActorNode);
 
   nodes
@@ -322,6 +329,24 @@ function updateActorsBubble(titleSelected) {
       .attr("x", (d) => d.x - imageWidth / 2)
       .attr("y", (d) => d.y - imageHeight / 2);
   }
+
+  function dragstarted(event, d) {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+
+  function dragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+  }
+
+  function dragended(event, d) {
+    if (!event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+
 
   function nodeRadius() {
     return 60;
@@ -617,10 +642,10 @@ function actorDetail(actor, actorDataSVG) {
     .attr(
       "transform",
       "translate(" +
-        (margin.left - 23) +
-        "," +
-        (height - margin.bottom - 10) +
-        ")"
+      (margin.left - 23) +
+      "," +
+      (height - margin.bottom - 10) +
+      ")"
     )
     .append("g")
     .attr("transform", "translate(25,10)");
