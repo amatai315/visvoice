@@ -855,13 +855,14 @@ function actorDetail(actor, actorDataSVG) {
         anime_counter += 1;
       }
       else if (!(data_sorted[i].jenre == "アニメ" || data_sorted[i].jenre == "ゲーム")){
-        data_selected.push(data_sorted[i]);regard
+        data_selected.push(data_sorted[i]);
       }
     }
 
     var nodes = svg
       .selectAll("circle")
       .data(data_selected)
+      
       .enter()
       .append("g")
       .attr("class", "node_group_character")
