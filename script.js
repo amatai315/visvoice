@@ -448,11 +448,7 @@ function clickedReturnToWorkButton() {
     .transition()
     .duration(durationTime)
     .attr("opacity", 1);
-<<<<<<< HEAD
   menu.style("display", "block");
-=======
-  menu.style("visibility", "visible");
->>>>>>> c5aae19076311001ba7f8344e633c0a02efbac6b
   actorDataSVG.remove();
   d3
     .select("#actor-introduction")
