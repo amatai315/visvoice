@@ -130,7 +130,7 @@ body {
     transform: rotate(360deg);
   }
 }
-
+/* 検索結果バー */
 #jenre-anime{
   border-left: medium solid  #9bc4ec;
 }
@@ -159,4 +159,8 @@ body {
 }
 #recommended-works{
   border-left: medium solid #a5a3b169;
+}
+.menu{
+  height: 1000px;
+  overflow: scroll;
 }
