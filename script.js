@@ -402,11 +402,9 @@ async function clickedActorNode(event, d) {
       .append("div")
       .attr("id", "actor-introduction")
       .style("width", width_menu);
-    
-    actorIntroductionElement
-      .append("div")
-      .text(`${d.name}`);
-    
+
+    actorIntroductionElement.append("div").text(`${d.name}`);
+
     if (actorIntroduction[d.name]["経歴/説明"] != undefined)
       actorIntroductionElement
         .append("div")
@@ -414,9 +412,9 @@ async function clickedActorNode(event, d) {
 
     actorDataSVG
       .append("image")
-      .attr("xlink:href", "./image/share-solid.svg")
-      .attr("x", 10)
-      .attr("y", 10)
+      .attr("xlink:href", "./image/back.svg")
+      .attr("x", 5)
+      .attr("y", 40)
       .attr("width", 50)
       .attr("height", 50)
       .on("click", clickedReturnToWorkButton)
@@ -450,9 +448,7 @@ function clickedReturnToWorkButton() {
     .attr("opacity", 1);
   menu.style("display", "block");
   actorDataSVG.remove();
-  d3
-    .select("#actor-introduction")
-    .remove();
+  d3.select("#actor-introduction").remove();
   actorSelected = !actorSelected;
 
   d3.select("#menu_character").remove();
@@ -662,10 +658,10 @@ function actorDetail(actor, actorDataSVG) {
     .attr(
       "transform",
       "translate(" +
-      (margin.left - 23) +
-      "," +
-      (height - margin.bottom - 10) +
-      ")"
+        (margin.left - 23) +
+        "," +
+        (height - margin.bottom - 10) +
+        ")"
     )
     .append("g")
     .attr("transform", "translate(25,10)");
