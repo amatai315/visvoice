@@ -391,19 +391,12 @@ function clickedActorNode(event, d) {
       .select("body")
       .append("svg")
       .attr("id", `detail_${d.name}`)
-      .attr("width", width)
-      .attr("height", height)
+      .attr("width", 1400)
+      .attr("height", 1200)
       .style("position", "absolute");
-    //
+
     actorDetail(d.name, actorDataSVG);
-    // actorDataSVG
-    //   .append("circle")
-    //   .attr("x", 1100)
-    //   .attr("y", 100)
-    //   .attr("height", 100)
-    //   .attr("width", 100)
-    //   .attr("fill", "red")
-    //   .on("click", clickedReturnToWorkButton);
+
     actorDataSVG
       .append("image")
       .attr("xlink:href", "./image/share-solid.svg")
@@ -447,8 +440,8 @@ function clickedReturnToWorkButton() {
 }
 
 function actorDetail(actor, actorDataSVG) {
-  var width = 1200;
-  var height = 1000;
+  var width = 1400;
+  var height = 1200;
   var margin = { top: 30, bottom: 60, right: 30, left: 60 };
   var time = 0;
   let dataset = {};
@@ -601,9 +594,6 @@ function actorDetail(actor, actorDataSVG) {
     .selectAll("mylayers")
     .data(stackedData)
     .enter()
-    // .select("body")
-    // .select("div#chartbox")
-    // .select("svg#field")
     .append("path")
     .style("fill", function (d, i) {
       return colorScale(d.key);
@@ -642,7 +632,7 @@ function actorDetail(actor, actorDataSVG) {
     .min(mintime)
     .max(maxtime)
     .step(1)
-    .width(1000 + 100)
+    .width(1300)
     .tickValues(timelabel)
     .on("onchange", (val) => {
       current_year = parseInt(val);
@@ -662,8 +652,6 @@ function actorDetail(actor, actorDataSVG) {
     .attr("transform", "translate(25,10)");
 
   gTime.call(sliderTime);
-  //初期表示値
-  // d3.select("p#timevalue").text(mintime);
 
   /////ここからマージ
 
@@ -809,7 +797,6 @@ function actorDetail(actor, actorDataSVG) {
         })
       )
       .force("charge", d3.forceManyBody().strength(5));
-    // .force("center", d3.forceCenter(width / 2, height / 2)); //反発力の設定
 
     /*data_selected: 半径が大きい上位20個を取ってくる配列*/
     data_sorted = [];
@@ -830,12 +817,17 @@ function actorDetail(actor, actorDataSVG) {
     });
 
     var anime_counter = 0;
-    for(var i = 0; i < data_sorted.length; i++){
-      if((data_sorted[i].jenre == "アニメ" || data_sorted[i].jenre == "ゲーム") && anime_counter < select_node_num){
+    for (var i = 0; i < data_sorted.length; i++) {
+      if (
+        (data_sorted[i].jenre == "アニメ" ||
+          data_sorted[i].jenre == "ゲーム") &&
+        anime_counter < select_node_num
+      ) {
         data_selected.push(data_sorted[i]);
         anime_counter += 1;
-      }
-      else if (!(data_sorted[i].jenre == "アニメ" || data_sorted[i].jenre == "ゲーム")){
+      } else if (
+        !(data_sorted[i].jenre == "アニメ" || data_sorted[i].jenre == "ゲーム")
+      ) {
         data_selected.push(data_sorted[i]);
       }
     }
@@ -927,7 +919,7 @@ function actorDetail(actor, actorDataSVG) {
     simulation
       .nodes(data_selected)
       .force("x", d3.forceX(width / 2).strength(0.1))
-      .force("y", d3.forceY(height / 4).strength(0.1))
+      .force("y", d3.forceY(height / 3).strength(0.1))
       .force("charge", d3.forceManyBody().strength(1))
       .force(
         "collision",
