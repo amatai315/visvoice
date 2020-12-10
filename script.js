@@ -238,21 +238,6 @@ function updateActorsBubble(titleSelected) {
       "collision",
       d3.forceCollide().radius((d) => d.radius + 2)
     )
-    .force(
-      "x",
-      d3
-        .forceX()
-        .strength(0.05)
-        .x(width / 2)
-    )
-    .force(
-      "y",
-      d3
-        .forceY()
-        .strength(0.05)
-        .y(height / 2)
-    )
-    .force("charge", d3.forceManyBody().strength(1))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
   const validDataList = [];
@@ -392,12 +377,12 @@ function clickedActorNode(event, d) {
         `translate(${width / 2},${height / 2})scale(${k})
              translate(${-node.attr("cx")},${-node.attr("cy")})`
       );
-    selectedActorNode
+    animeSelectionSVG
       .selectAll("text")
       .transition()
       .duration(durationTime)
       .attr("opacity", 0);
-    selectedActorNode
+    animeSelectionSVG
       .selectAll("image")
       .transition()
       .duration(durationTime)
@@ -611,7 +596,6 @@ function actorDetail(actor, actorDataSVG) {
     );
 
   var stackedData = d3.stack().keys(jenreList)(forStack);
-  console.log(stackedData);
   // エリアの表示
   var linearea = svg
     .selectAll("mylayers")
@@ -622,7 +606,6 @@ function actorDetail(actor, actorDataSVG) {
     // .select("svg#field")
     .append("path")
     .style("fill", function (d, i) {
-      console.log(d.key);
       return colorScale(d.key);
     })
     .attr(
@@ -662,7 +645,6 @@ function actorDetail(actor, actorDataSVG) {
     .width(1000 + 100)
     .tickValues(timelabel)
     .on("onchange", (val) => {
-      // console.log(val);
       current_year = parseInt(val);
       showBubbleChart();
     });
@@ -724,7 +706,6 @@ function actorDetail(actor, actorDataSVG) {
     });
 
   personal_data = actorsDict[person];
-  console.log(personal_data[0]);
 
   personal_data.forEach(function (d) {
     var year = parseFloat(d.year.slice(0, 4));
@@ -862,7 +843,6 @@ function actorDetail(actor, actorDataSVG) {
     var nodes = svg
       .selectAll("circle")
       .data(data_selected)
-      
       .enter()
       .append("g")
       .attr("class", "node_group_character")
@@ -893,7 +873,6 @@ function actorDetail(actor, actorDataSVG) {
       .on("mouseout", mouseOut)
       .on("click", function (d, click_node) {
         const selectedcharaNode = d3.select(d.currentTarget);
-        console.log(d);
       })
       .attr("x", width / 2)
       .attr("y", height / 4)
