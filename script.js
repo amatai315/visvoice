@@ -4,6 +4,7 @@ const width_menu = 500;
 var colorScale = d3.scaleOrdinal(d3.schemePaired);
 var currentTransform = { k: 1, x: 0, y: 0 };
 var actorSelected = false;
+const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const canvas = d3
   .select("body")
   .append("svg")
@@ -47,13 +48,6 @@ const menu = d3
 const worksList = [];
 const actorsDict = {};
 
-// const dataProcessingText = canvas
-//   .append("text")
-//   .attr("x", width / 2)
-//   .attr("y", height / 2)
-//   .attr("font-size", 60)
-//   .attr("text-anchor", "middle")
-//   .text("データ処理中です");
 const processPlace = d3
   .select("body")
   .append("div")
@@ -356,7 +350,7 @@ function updateActorsBubble(titleSelected) {
   }
 }
 
-function clickedActorNode(event, d) {
+async function clickedActorNode(event, d) {
   //ここに、声優のノードがノードがクリックされたときの挙動を書く感じです。
   //声優名は、d.nameで取得できます。
   const selectedActorNode = d3.select(event.currentTarget);
@@ -387,6 +381,7 @@ function clickedActorNode(event, d) {
       .transition()
       .duration(durationTime)
       .attr("opacity", 0);
+    menu.style("visibility", "hidden");
     actorDataSVG = d3
       .select("body")
       .append("svg")
@@ -395,6 +390,7 @@ function clickedActorNode(event, d) {
       .attr("height", 1200)
       .style("position", "absolute");
 
+    await _sleep(durationTime);
     actorDetail(d.name, actorDataSVG);
 
     actorDataSVG
@@ -433,6 +429,7 @@ function clickedReturnToWorkButton() {
     .transition()
     .duration(durationTime)
     .attr("opacity", 1);
+  menu.style("visibility", "visible")
   actorDataSVG.remove();
   actorSelected = !actorSelected;
 
