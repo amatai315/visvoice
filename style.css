@@ -131,3 +131,32 @@ body {
   }
 }
 
+#jenre-anime{
+  border-left: medium solid  #9bc4ec;
+}
+
+#jenre-game{
+  border-left: medium solid #55aaff;
+}
+
+#jenre-foreign-movie{
+  border-left: medium solid #f479f8;
+}
+#jenre-comic{
+  border-left: medium solid #f1d37f;
+}
+#jenre-japanese-movie{
+  border-left: medium solid #f5b9f5;
+}
+#jenre-special-photographing-and-puppet-show{
+  border-left: medium solid #fc5151;
+}
+#jenre-dorama{
+  border-left: medium solid #79b873;
+}
+#jenre-others{
+  border-left: medium solid #a5a3b169;
+}
+#recommended-works{
+  border-left: medium solid #a5a3b169;
+}
