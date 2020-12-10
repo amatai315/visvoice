@@ -387,16 +387,18 @@ async function clickedActorNode(event, d) {
       .duration(durationTime)
       .attr("opacity", 0);
     menu.style("display", "none");
+    
+    await _sleep(durationTime);
+
     actorDataSVG = d3
       .select("body")
       .append("svg")
       .attr("id", `detail_${d.name}`)
       .attr("width", 1400)
-      .attr("height", 1200)
-      .style("position", "absolute");
+      .attr("height", 1200);
 
-    await _sleep(durationTime);
     actorDetail(d.name, actorDataSVG);
+    canvas.style("display", "none");
     const actorIntroductionElement = d3
       .select("body")
       .append("div")
@@ -427,6 +429,7 @@ async function clickedActorNode(event, d) {
 
 function clickedReturnToWorkButton() {
   const durationTime = 750;
+  canvas.style("display", "block");
   selectedWorkTextElement
     .transition()
     .duration(durationTime)
