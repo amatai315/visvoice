@@ -47,6 +47,7 @@ const menu = d3
 
 const worksList = [];
 const actorsDict = {};
+var actorIntroduction;
 
 const processPlace = d3
   .select("body")
@@ -95,6 +96,10 @@ d3.csv("data/voice_actors_greater_than_100characters.csv").then((data) => {
 
   processPlace.transition().delay(500).remove();
   searchWorks();
+});
+
+d3.json("data/voice_actors_introduction.json").then((data) => {
+  actorIntroduction = data;
 });
 
 menu.append("div").text("作品名で検索");
@@ -381,7 +386,7 @@ async function clickedActorNode(event, d) {
       .transition()
       .duration(durationTime)
       .attr("opacity", 0);
-    menu.style("visibility", "hidden");
+    menu.style("display", "none");
     actorDataSVG = d3
       .select("body")
       .append("svg")
@@ -392,6 +397,20 @@ async function clickedActorNode(event, d) {
 
     await _sleep(durationTime);
     actorDetail(d.name, actorDataSVG);
+    const actorIntroductionElement = d3
+      .select("body")
+      .append("div")
+      .attr("id", "actor-introduction")
+      .style("width", width_menu);
+    
+    actorIntroductionElement
+      .append("div")
+      .text(`${d.name}`);
+    
+    if (actorIntroduction[d.name]["経歴/説明"] != undefined)
+      actorIntroductionElement
+        .append("div")
+        .html(`${actorIntroduction[d.name]["経歴/説明"]}`);
 
     actorDataSVG
       .append("image")
@@ -429,8 +448,11 @@ function clickedReturnToWorkButton() {
     .transition()
     .duration(durationTime)
     .attr("opacity", 1);
-  menu.style("visibility", "visible")
+  menu.style("display", "block");
   actorDataSVG.remove();
+  d3
+    .select("#actor-introduction")
+    .remove();
   actorSelected = !actorSelected;
 
   d3.select("#menu_character").remove();
@@ -640,10 +662,10 @@ function actorDetail(actor, actorDataSVG) {
     .attr(
       "transform",
       "translate(" +
-        (margin.left - 23) +
-        "," +
-        (height - margin.bottom - 10) +
-        ")"
+      (margin.left - 23) +
+      "," +
+      (height - margin.bottom - 10) +
+      ")"
     )
     .append("g")
     .attr("transform", "translate(25,10)");
