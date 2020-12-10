@@ -396,10 +396,10 @@ async function clickedActorNode(event, d) {
     actorDataSVG
       .append("image")
       .attr("xlink:href", "./image/share-solid.svg")
-      .attr("x", 1100)
-      .attr("y", 100)
-      .attr("width", 100)
-      .attr("height", 100)
+      .attr("x", 10)
+      .attr("y", 10)
+      .attr("width", 50)
+      .attr("height", 50)
       .on("click", clickedReturnToWorkButton)
       .style("cursor", "pointer");
     actorSelected = !actorSelected;
@@ -429,7 +429,7 @@ function clickedReturnToWorkButton() {
     .transition()
     .duration(durationTime)
     .attr("opacity", 1);
-  menu.style("visibility", "visible")
+  menu.style("visibility", "visible");
   actorDataSVG.remove();
   actorSelected = !actorSelected;
 
@@ -854,7 +854,7 @@ function actorDetail(actor, actorDataSVG) {
       .attr("stroke", function (d) {
         return colorScale(d.jenre);
       })
-      .attr("stroke-width", 2.5)
+      .attr("stroke-width", 7.5)
       .attr("class", function (d) {
         return "node_" + d.character;
       })
