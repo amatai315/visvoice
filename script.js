@@ -831,8 +831,9 @@ function actorDetail(actor, actorDataSVG) {
     // .force("center", d3.forceCenter(width / 2, height / 2)); //反発力の設定
 
     /*data_selected: 半径が大きい上位20個を取ってくる配列*/
+    data_sorted = [];
     data_selected = [];
-    data_selected = personal_data.filter(function (d) {
+    data_sorted = personal_data.filter(function (d) {
       if (
         d.year_double <= input + select_year_range &&
         d.year_double >= input - select_year_range
@@ -841,13 +842,22 @@ function actorDetail(actor, actorDataSVG) {
       }
     });
 
-    data_selected.sort(function (a, b) {
+    data_sorted = data_sorted.sort(function (a, b) {
       if (a.radius > b.radius) return -1;
       if (a.radius < b.radius) return 1;
       return 0;
     });
 
-    data_selected = data_selected.slice(0, select_node_num);
+    var anime_counter = 0;
+    for(var i = 0; i < data_sorted.length; i++){
+      if((data_sorted[i].jenre == "アニメ" || data_sorted[i].jenre == "ゲーム") && anime_counter < select_node_num){
+        data_selected.push(data_sorted[i]);
+        anime_counter += 1;
+      }
+      else if (!(data_sorted[i].jenre == "アニメ" || data_sorted[i].jenre == "ゲーム")){
+        data_selected.push(data_sorted[i]);regard
+      }
+    }
 
     var nodes = svg
       .selectAll("circle")
