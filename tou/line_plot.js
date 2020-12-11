@@ -405,16 +405,16 @@ d3.json("voice_actors.json").then(function (data) {
       .on("mouseover", mouseOver)
       .on("mouseout", mouseOut);
 
-    var text = svg
-      .selectAll(".node_group_character")
-      .append("text")
-      .attr("class", "chara_node")
-      .attr("font-size", 10)
-      .attr("stroke", "none")
-      .attr("fill", "black")
-      .text(function (d) {
-        return d.character.replace(" ", "");
-      });
+    // var text = svg
+    //   .selectAll(".node_group_character")
+    //   .append("text")
+    //   .attr("class", "chara_node")
+    //   .attr("font-size", 10)
+    //   .attr("stroke", "none")
+    //   .attr("fill", "black")
+    //   .text(function (d) {
+    //     return d.character.replace(" ", "");
+    //   });
 
     simulation
       .nodes(data_selected)
