@@ -148,9 +148,18 @@ function searchWorks() {
           .select(`#jenre-${jenreToAlphabet(d.jenre)}`)
           .append("div")
           .attr("class", "work")
+          .attr("id","work-"+d.title)
           .style("font-weight", "normal");
         applyWorkButtonWrapper.append("div").text(`${d.title}`);
-        applyWorkButtonWrapper
+
+        document.getElementById("work-"+d.title).onclick = function(){
+          if (actorSelected) {
+            clickedReturnToWorkButton();
+          }
+          selectedWorkTextElement.text(d.title);
+          updateActorsBubble(d.title);
+        };
+        /*applyWorkButtonWrapper
           .append("button")
           .attr("value", d.title)
           .text("Apply")
@@ -160,7 +169,7 @@ function searchWorks() {
             }
             selectedWorkTextElement.text(d.title);
             updateActorsBubble(d.title);
-          });
+          });*/
       });
     const hitNum = d3.selectAll("#search-result-list .work").size();
     d3.selectAll("#search-result-hit-num").text(`${hitNum}件ヒットしました`);
@@ -192,9 +201,18 @@ function searchWorks() {
           .select("#recommended-works")
           .append("div")
           .attr("class", "work")
+          .attr("id","recommended-"+d.title)
           .style("font-weight", "normal");
         applyWorkButtonWrapper.append("div").text(`${d.title}`);
-        applyWorkButtonWrapper
+
+        document.getElementById("recommended-"+d.title).onclick = function(){
+          if (actorSelected) {
+            clickedReturnToWorkButton();
+          }
+          selectedWorkTextElement.text(d.title);
+          updateActorsBubble(d.title);
+        };
+        /*applyWorkButtonWrapper
           .append("button")
           .attr("value", d.title)
           .text("Apply")
@@ -204,7 +222,7 @@ function searchWorks() {
             }
             selectedWorkTextElement.text(d.title);
             updateActorsBubble(d.title);
-          });
+          });*/
       });
   }
 }

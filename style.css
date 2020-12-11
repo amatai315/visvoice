@@ -164,3 +164,25 @@ body {
   height: 1000px;
   overflow: scroll;
 }
+
+.work-text{
+  position: absolute;
+  top: 50px;
+  left: 100px;
+  border: medium solid #a5a3b169;
+}
+
+.work{
+  padding-bottom: 25px;
+  border-bottom: 1px solid #cccccc;
+}
+
+.work:hover{
+  font-family: "ＭＳ Ｐ明朝","ＭＳ 明朝",serif;
+  background-color: #eeeeee;
+  cursor: pointer;
+}
+
+.work:active{
+  background-color: #c9f3f7;
+}
