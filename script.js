@@ -405,7 +405,7 @@ async function clickedActorNode(event, d) {
       .duration(durationTime)
       .attr("opacity", 0);
     menu.style("display", "none");
-    
+
     await _sleep(durationTime);
 
     actorDataSVG = d3
@@ -530,8 +530,9 @@ function actorDetail(actor, actorDataSVG) {
     .attr("width", width)
     .attr("height", height);
 
-  var tooltip = actorDataSVG
-    .append("g")
+  var tooltip = d3
+    .select("body")
+    .append("div")
     .attr("class", "tooltip")
     .style("visibility", "hidden");
 
@@ -899,9 +900,6 @@ function actorDetail(actor, actorDataSVG) {
       })
       .on("mouseover", mouseOver)
       .on("mouseout", mouseOut)
-      .on("click", function (d, click_node) {
-        const selectedcharaNode = d3.select(d.currentTarget);
-      })
       .attr("x", width / 2)
       .attr("y", height / 4)
       .attr("r", 0)
@@ -921,6 +919,48 @@ function actorDetail(actor, actorDataSVG) {
         };
       });
 
+    var last_node;
+    var last_r = 0;
+    d3.selectAll(".node_group_character").on("click", function (d, click_node) {
+      d3.transition()
+        .duration(2000)
+        .ease(d3.easePolyOut)
+        .tween("moveIn", () => {
+          last_r = click_node.r;
+          const ir = d3.interpolateNumber(click_node.r, 115);
+          return function (t) {
+            click_node.r = ir(t);
+            simulation.force(
+              "collide",
+              d3.forceCollide((d) => d.r)
+            );
+          };
+        });
+      d3.selectAll(".node_group_character")
+        .filter(function (d) {
+          if (d != click_node && d.r > 100) {
+            return d;
+          }
+        })
+        .transition()
+        .duration(2000)
+        .ease(d3.easePolyOut)
+        .tween("moveOut", (d) => {
+          console.log(d);
+          const temp = d.r;
+          const i = d3.interpolateNumber(temp, 50);
+          return function (t) {
+            d.r = i(t);
+            simulation.force(
+              "collide",
+              d3.forceCollide((d) => d.r)
+            );
+          };
+        });
+
+      // console.log(last_r);
+    });
+
     d3.selectAll(".node_group_character").style("cursor", "pointer");
     svg
       .selectAll(".node_group_character")
@@ -932,7 +972,6 @@ function actorDetail(actor, actorDataSVG) {
     svg
       .selectAll(".node_group_character")
       .append("image")
-      .classed("node-icon", true)
       .attr("clip-path", (d) => `url(#clip-${d.id})`)
       .attr("xlink:href", (d) => d.imageLink)
       .on("mouseover", mouseOver)
@@ -954,8 +993,8 @@ function actorDetail(actor, actorDataSVG) {
 
     simulation
       .nodes(data_selected)
-      .force("x", d3.forceX(width / 2).strength(0.1))
-      .force("y", d3.forceY(height / 3).strength(0.1))
+      .force("x", d3.forceX(width / 2).strength(0.15))
+      .force("y", d3.forceY(height / 3).strength(0.15))
       .force("charge", d3.forceManyBody().strength(1))
       .force(
         "collision",
@@ -968,7 +1007,7 @@ function actorDetail(actor, actorDataSVG) {
 
     function mouseOver(event, d) {
       tooltip
-        .html("anime:" + d.title + "<br/>character:" + d.character)
+        .html("title:" + d.title + "<br/>character:" + d.character)
         .style("left", event.pageX + "px")
         .style("top", event.pageY + "px")
         .style("visibility", "visible");
