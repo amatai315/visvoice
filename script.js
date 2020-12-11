@@ -423,12 +423,62 @@ async function clickedActorNode(event, d) {
       .attr("id", "actor-introduction")
       .style("width", width_menu);
 
-    actorIntroductionElement.append("div").text(`${d.name}`);
-
-    if (actorIntroduction[d.name]["経歴/説明"] != undefined)
       actorIntroductionElement
-        .append("div")
-        .html(`${actorIntroduction[d.name]["経歴/説明"]}`);
+      .append("div")
+      .attr("id","actor-intro-name")
+      .text(`${d.name}`);
+
+  const keylist = [
+    "生年月日",
+    "出身都道府県",
+    "血液型",
+    "趣味/特技",
+    "経歴/説明",
+    "公式・本人掲載サイト"
+  ];
+
+  keylist
+      .filter((key)=>{
+        return (actorIntroduction[d.name][key]);
+      })
+      .forEach((key)=>{
+        console.log(key);
+        var actorIntroBox = actorIntroductionElement
+          .append("div")
+          .attr("class","intro-element")
+          .attr("id","intro-element-"+keyToAlphabetCharacter(key));
+
+        actorIntroBox
+            .append("div")
+            .attr("class","intro-element-keys")
+            .text(key);
+        
+        actorIntroBox
+            .append("div")
+            .text(actorIntroduction[d.name][key])
+            .attr("class","intro-element-values");
+      });
+
+  function keyToAlphabetCharacter(key) {
+    switch (key) {
+      case "生年月日":
+        return "birthday";
+      case "出身都道府県":
+        return "prefecture";
+      case "血液型":
+        return "blood-type";
+      case "趣味/特技":
+        return "hobby";
+      case "経歴/説明":
+        return "intro";
+      case "公式・本人掲載サイト":
+        return "site";
+      default:
+        return "others";
+    }
+  }
+
+    
 
     actorDataSVG
       .append("image")

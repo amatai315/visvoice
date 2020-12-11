@@ -185,3 +185,28 @@ body {
 .work:active{
   background-color: #c9f3f7;
 }
+
+#actor-introduction{
+  border-left: 1px solid #bbbbbb;
+  background-color: #f3f3f3;
+}
+
+#actor-intro-name{
+  font-size: 50px;
+  padding-bottom: 20px;
+  color: purple;  
+}
+
+.intro-element{
+  padding-bottom : 30px;
+  border-bottom: 1px solid #cccccc;
+}
+
+.intro-element-keys{
+  font-weight: bold;
+  padding-bottom: 10px;
+}
+
+.intro-element-values{
+  font-weight: normal;
+}
