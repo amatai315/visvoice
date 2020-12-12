@@ -420,7 +420,6 @@ async function clickedActorNode(event, d) {
         return (actorIntroduction[d.name][key]);
       })
       .forEach((key) => {
-        console.log(key);
         var actorIntroBox = actorIntroductionElement
           .append("div")
           .attr("class", "intro-element")
@@ -433,7 +432,7 @@ async function clickedActorNode(event, d) {
 
         actorIntroBox
           .append("div")
-          .text(actorIntroduction[d.name][key])
+          .html(actorIntroduction[d.name][key])
           .attr("class", "intro-element-values");
       });
 
@@ -974,7 +973,6 @@ function actorDetail(actor, actorDataSVG) {
         .duration(2000)
         .ease(d3.easePolyOut)
         .tween("moveOut", (d) => {
-          console.log(d);
           const temp = d.r;
           const i = d3.interpolateNumber(temp, 50);
           return function (t) {
@@ -985,8 +983,6 @@ function actorDetail(actor, actorDataSVG) {
             );
           };
         });
-
-      // console.log(last_r);
     });
 
     d3.selectAll(".node_group_character").style("cursor", "pointer");
