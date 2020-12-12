@@ -148,28 +148,17 @@ function searchWorks() {
           .select(`#jenre-${jenreToAlphabet(d.jenre)}`)
           .append("div")
           .attr("class", "work")
-          .attr("id","work-"+d.title)
+          .attr("id", "work-" + d.title)
           .style("font-weight", "normal");
         applyWorkButtonWrapper.append("div").text(`${d.title}`);
 
-        document.getElementById("work-"+d.title).onclick = function(){
+        document.getElementById("work-" + d.title).onclick = function () {
           if (actorSelected) {
             clickedReturnToWorkButton();
           }
           selectedWorkTextElement.text(d.title);
           updateActorsBubble(d.title);
         };
-        /*applyWorkButtonWrapper
-          .append("button")
-          .attr("value", d.title)
-          .text("Apply")
-          .on("click", () => {
-            if (actorSelected) {
-              clickedReturnToWorkButton();
-            }
-            selectedWorkTextElement.text(d.title);
-            updateActorsBubble(d.title);
-          });*/
       });
     const hitNum = d3.selectAll("#search-result-list .work").size();
     d3.selectAll("#search-result-hit-num").text(`${hitNum}件ヒットしました`);
@@ -201,28 +190,17 @@ function searchWorks() {
           .select("#recommended-works")
           .append("div")
           .attr("class", "work")
-          .attr("id","recommended-"+d.title)
+          .attr("id", "recommended-" + d.title)
           .style("font-weight", "normal");
         applyWorkButtonWrapper.append("div").text(`${d.title}`);
 
-        document.getElementById("recommended-"+d.title).onclick = function(){
+        document.getElementById("recommended-" + d.title).onclick = function () {
           if (actorSelected) {
             clickedReturnToWorkButton();
           }
           selectedWorkTextElement.text(d.title);
           updateActorsBubble(d.title);
         };
-        /*applyWorkButtonWrapper
-          .append("button")
-          .attr("value", d.title)
-          .text("Apply")
-          .on("click", () => {
-            if (actorSelected) {
-              clickedReturnToWorkButton();
-            }
-            selectedWorkTextElement.text(d.title);
-            updateActorsBubble(d.title);
-          });*/
       });
   }
 }
@@ -423,62 +401,62 @@ async function clickedActorNode(event, d) {
       .attr("id", "actor-introduction")
       .style("width", width_menu);
 
-      actorIntroductionElement
+    actorIntroductionElement
       .append("div")
-      .attr("id","actor-intro-name")
+      .attr("id", "actor-intro-name")
       .text(`${d.name}`);
 
-  const keylist = [
-    "生年月日",
-    "出身都道府県",
-    "血液型",
-    "趣味/特技",
-    "経歴/説明",
-    "公式・本人掲載サイト"
-  ];
+    const keylist = [
+      "生年月日",
+      "出身都道府県",
+      "血液型",
+      "趣味/特技",
+      "経歴/説明",
+      "公式・本人掲載サイト"
+    ];
 
-  keylist
-      .filter((key)=>{
+    keylist
+      .filter((key) => {
         return (actorIntroduction[d.name][key]);
       })
-      .forEach((key)=>{
+      .forEach((key) => {
         console.log(key);
         var actorIntroBox = actorIntroductionElement
           .append("div")
-          .attr("class","intro-element")
-          .attr("id","intro-element-"+keyToAlphabetCharacter(key));
+          .attr("class", "intro-element")
+          .attr("id", "intro-element-" + keyToAlphabetCharacter(key));
 
         actorIntroBox
-            .append("div")
-            .attr("class","intro-element-keys")
-            .text(key);
-        
+          .append("div")
+          .attr("class", "intro-element-keys")
+          .text(key);
+
         actorIntroBox
-            .append("div")
-            .text(actorIntroduction[d.name][key])
-            .attr("class","intro-element-values");
+          .append("div")
+          .text(actorIntroduction[d.name][key])
+          .attr("class", "intro-element-values");
       });
 
-  function keyToAlphabetCharacter(key) {
-    switch (key) {
-      case "生年月日":
-        return "birthday";
-      case "出身都道府県":
-        return "prefecture";
-      case "血液型":
-        return "blood-type";
-      case "趣味/特技":
-        return "hobby";
-      case "経歴/説明":
-        return "intro";
-      case "公式・本人掲載サイト":
-        return "site";
-      default:
-        return "others";
+    function keyToAlphabetCharacter(key) {
+      switch (key) {
+        case "生年月日":
+          return "birthday";
+        case "出身都道府県":
+          return "prefecture";
+        case "血液型":
+          return "blood-type";
+        case "趣味/特技":
+          return "hobby";
+        case "経歴/説明":
+          return "intro";
+        case "公式・本人掲載サイト":
+          return "site";
+        default:
+          return "others";
+      }
     }
-  }
 
-    
+
 
     actorDataSVG
       .append("image")
@@ -730,10 +708,10 @@ function actorDetail(actor, actorDataSVG) {
     .attr(
       "transform",
       "translate(" +
-        (margin.left - 23) +
-        "," +
-        (height - margin.bottom - 10) +
-        ")"
+      (margin.left - 23) +
+      "," +
+      (height - margin.bottom - 10) +
+      ")"
     )
     .append("g")
     .attr("transform", "translate(25,10)");

@@ -35,35 +35,37 @@ body {
 #year_range_text {
   position: absolute;
   left: 100px;
-  top: 200px;
+  top: 300px;
 }
 
 #year_range {
   position: absolute;
   left: 100px;
-  top: 220px;
+  top: 320px;
 }
 
 #num_node_text {
   position: absolute;
   left: 100px;
-  top: 250px;
+  top: 350px;
 }
 
 #num_node {
   position: absolute;
   left: 100px;
-  top: 270px;
+  top: 370px;
 }
+
 /* ローディング画面 */
+
 .loader-wrap {
-	position: fixed;
-	display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    background: #fffaf0;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: #fffaf0;
 }
 
 .loader {
@@ -74,11 +76,11 @@ body {
   height: 11em;
   border-radius: 50%;
   background: #0080ff;
-  background: -moz-linear-gradient(left, #0080ff 10%, rgba(0,128,255, 0) 42%);
-  background: -webkit-linear-gradient(left, #0080ff 10%, rgba(0,128,255, 0) 42%);
-  background: -o-linear-gradient(left, #0080ff 10%, rgba(0,128,255, 0) 42%);
-  background: -ms-linear-gradient(left, #0080ff 10%, rgba(0,128,255, 0) 42%);
-  background: linear-gradient(to right, #0080ff 10%, rgba(0,128,255, 0) 42%);
+  background: -moz-linear-gradient(left, #0080ff 10%, rgba(0, 128, 255, 0) 42%);
+  background: -webkit-linear-gradient(left, #0080ff 10%, rgba(0, 128, 255, 0) 42%);
+  background: -o-linear-gradient(left, #0080ff 10%, rgba(0, 128, 255, 0) 42%);
+  background: -ms-linear-gradient(left, #0080ff 10%, rgba(0, 128, 255, 0) 42%);
+  background: linear-gradient(to right, #0080ff 10%, rgba(0, 128, 255, 0) 42%);
   position: relative;
   -webkit-animation: load3 1.4s infinite linear;
   animation: load3 1.4s infinite linear;
@@ -86,6 +88,7 @@ body {
   -ms-transform: translateZ(0);
   transform: translateZ(0);
 }
+
 .loader:before {
   width: 50%;
   height: 50%;
@@ -96,8 +99,9 @@ body {
   left: 0;
   content: '';
 }
+
 .loader:after {
-  background:#fffaf0;
+  background: #fffaf0;
   width: 75%;
   height: 75%;
   border-radius: 50%;
@@ -109,6 +113,7 @@ body {
   bottom: 0;
   right: 0;
 }
+
 @-webkit-keyframes load3 {
   0% {
     -webkit-transform: rotate(0deg);
@@ -119,6 +124,7 @@ body {
     transform: rotate(360deg);
   }
 }
+
 @keyframes load3 {
   0% {
     -webkit-transform: rotate(0deg);
@@ -129,84 +135,93 @@ body {
     transform: rotate(360deg);
   }
 }
+
 /* 検索結果バー */
-#jenre-anime{
-  border-left: medium solid  #9bc4ec;
+
+#jenre-anime {
+  border-left: medium solid #9bc4ec;
 }
 
-#jenre-game{
+#jenre-game {
   border-left: medium solid #55aaff;
 }
 
-#jenre-foreign-movie{
+#jenre-foreign-movie {
   border-left: medium solid #f479f8;
 }
-#jenre-comic{
+
+#jenre-comic {
   border-left: medium solid #f1d37f;
 }
-#jenre-japanese-movie{
+
+#jenre-japanese-movie {
   border-left: medium solid #f5b9f5;
 }
-#jenre-special-photographing-and-puppet-show{
+
+#jenre-special-photographing-and-puppet-show {
   border-left: medium solid #fc5151;
 }
-#jenre-dorama{
+
+#jenre-dorama {
   border-left: medium solid #79b873;
 }
-#jenre-others{
+
+#jenre-others {
   border-left: medium solid #a5a3b169;
 }
-#recommended-works{
+
+#recommended-works {
   border-left: medium solid #a5a3b169;
 }
-.menu{
+
+.menu {
   height: 1000px;
   overflow: scroll;
 }
 
-.work-text{
+.work-text {
   position: absolute;
   top: 50px;
   left: 100px;
   border: medium solid #a5a3b169;
 }
 
-.work{
+.work {
   padding-bottom: 25px;
   border-bottom: 1px solid #cccccc;
 }
 
-.work:hover{
-  font-family: "ＭＳ Ｐ明朝","ＭＳ 明朝",serif;
+.work:hover {
+  font-family: "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
   background-color: #eeeeee;
   cursor: pointer;
 }
 
-.work:active{
+.work:active {
   background-color: #c9f3f7;
 }
 
-#actor-introduction{
+#actor-introduction {
   border-left: 1px solid #bbbbbb;
   background-color: #f3f3f3;
 }
 
-#actor-intro-name{
+#actor-intro-name {
   font-size: 50px;
   padding-bottom: 20px;
-  color: purple;  
+  color: purple;
 }
 
-.intro-element{
-  padding-bottom : 30px;
+.intro-element {
+  padding-bottom: 30px;
   border-bottom: 1px solid #cccccc;
 }
 
-.intro-element-keys{
+.intro-element-keys {
   font-weight: bold;
   padding-bottom: 10px;
 }
 
-.intro-element-values{
+.intro-element-values {
   font-weight: normal;
 }
