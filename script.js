@@ -194,7 +194,9 @@ function searchWorks() {
           .style("font-weight", "normal");
         applyWorkButtonWrapper.append("div").text(`${d.title}`);
 
-        document.getElementById("recommended-" + d.title).onclick = function () {
+        document.getElementById(
+          "recommended-" + d.title
+        ).onclick = function () {
           if (actorSelected) {
             clickedReturnToWorkButton();
           }
@@ -413,12 +415,12 @@ async function clickedActorNode(event, d) {
       "血液型",
       "趣味/特技",
       "経歴/説明",
-      "公式・本人掲載サイト"
+      "公式・本人掲載サイト",
     ];
 
     keylist
       .filter((key) => {
-        return (actorIntroduction[d.name][key]);
+        return actorIntroduction[d.name][key];
       })
       .forEach((key) => {
         var actorIntroBox = actorIntroductionElement
@@ -455,8 +457,6 @@ async function clickedActorNode(event, d) {
           return "others";
       }
     }
-
-
 
     actorDataSVG
       .append("image")
@@ -517,7 +517,21 @@ function actorDetail(actor, actorDataSVG) {
   var StackList = [];
   var jenreList = [];
 
-  var colorScale = d3.scaleOrdinal(d3.schemePaired);
+  // var colorScale = d3.scaleOrdinal(d3.schemePaired);
+
+  var colorScale = d3
+    .scaleOrdinal()
+    .domain([
+      "アニメ",
+      "ゲーム",
+      "漫画",
+      "ドラマ",
+      "日本映画",
+      "海外映画",
+      "特撮/人形劇",
+      "文学",
+    ])
+    .range(d3.schemePaired);
 
   var month_day_sum = [
     0,
@@ -708,10 +722,10 @@ function actorDetail(actor, actorDataSVG) {
     .attr(
       "transform",
       "translate(" +
-      (margin.left - 23) +
-      "," +
-      (height - margin.bottom - 10) +
-      ")"
+        (margin.left - 23) +
+        "," +
+        (height - margin.bottom - 10) +
+        ")"
     )
     .append("g")
     .attr("transform", "translate(25,10)");
