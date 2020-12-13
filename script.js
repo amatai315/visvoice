@@ -282,7 +282,7 @@ function updateActorsBubble(titleSelected) {
   nodes
     .append("text")
     .attr("class", "char-name")
-    .attr("font-size", 12)
+    .attr("font-size", 14)
     .attr("text-anchor", "middle")
     .attr("stroke", "black")
     .text((d) => d.char);
@@ -291,8 +291,9 @@ function updateActorsBubble(titleSelected) {
     .append("text")
     .attr("class", "actor-name")
     .attr("font-size", 12)
+    .attr("font-weight", "1")
     .attr("text-anchor", "middle")
-    .attr("stroke", "black")
+    .attr("stroke", "#777777")
     .text((d) => d.name);
 
   const imageWidth = 60;
